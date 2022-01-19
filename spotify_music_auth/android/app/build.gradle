@@ -64,5 +64,7 @@ flutter {
 }
 
 dependencies {
+    implementation project(':spotify-auth')
+    implementation project(':spotify-app-remote')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
