@@ -47,18 +47,6 @@ class _SpotifyUserState extends State<SpotifyUser> {
           _connected = data.connected;
         }
         return Scaffold(
-          appBar: AppBar(
-            title: const Text('Play-Connect'),
-            backgroundColor: Colors.grey[900],
-            actions: [
-              _connected
-                  ? IconButton(
-                      onPressed: disconnect,
-                      icon: const Icon(Icons.exit_to_app),
-                    )
-                  : Container()
-            ],
-          ),
           body: flowWidget(context),
         );
       },

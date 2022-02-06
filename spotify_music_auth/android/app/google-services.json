@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "604774421863",
+    "project_id": "play-connect-40fa6",
+    "storage_bucket": "play-connect-40fa6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:604774421863:android:9cc13a52e61baff1358bc2",
+        "android_client_info": {
+          "package_name": "com.example.spotify_music_auth"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "604774421863-f0sse62jlo44k4kd59vt086eu8rfced2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHmghqU0iwN-jKQu9kx5l23G211tyB7Ao"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "604774421863-f0sse62jlo44k4kd59vt086eu8rfced2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
