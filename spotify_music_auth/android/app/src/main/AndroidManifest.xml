@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.spotify_music_auth">
    <application
-        android:label="spotify_music_auth"
+        android:label="Play Connect"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

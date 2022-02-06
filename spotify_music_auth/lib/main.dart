@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/services/auth.dart';
 import 'package:spotify_music_auth/services/spotifyauth.dart';
 
@@ -20,6 +21,7 @@ class Home extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return MaterialApp(
+            title: "Play Connect",
             debugShowCheckedModeBanner: false,
             home: Center(
               child: Text(snapshot.error.toString()),
@@ -28,15 +30,16 @@ class Home extends StatelessWidget {
         }
         if (snapshot.connectionState == ConnectionState.done) {
           return MaterialApp(
+            title: "Play Connect",
             theme: ThemeData(
-              primarySwatch: Colors.indigo,
+              primarySwatch: Colors.purple,
             ),
             debugShowCheckedModeBanner: false,
             home: AuthService().handleAuth(),
           );
         }
         return const CircularProgressIndicator(
-          color: Colors.green,
+          color: Colors.purple,
         );
       },
     );
