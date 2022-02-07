@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:spotify_music_auth/constants/constants.dart';
+import 'package:spotify_music_auth/services/auth.dart';
+import 'package:spotify_music_auth/services/authenticate.dart';
 
 class HomePage extends StatelessWidget {
   // final bool connected;
@@ -9,7 +12,19 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Play-Connect'),
-        backgroundColor: Colors.grey[900],
+        centerTitle: true,
+        backgroundColor: kPrimaryColor,
+        actions: [
+          IconButton(
+              icon: const Icon(Icons.exit_to_app),
+              onPressed: () {
+                AuthService().signOut().then((value) =>
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const Authenticate())));
+              }),
+        ],
       ),
       body: const Center(
         child: Text("Please! Login to your Remote Spotify App"),

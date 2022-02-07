@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:spotify_music_auth/components/alreadyhaveaccount.dart';
 import 'package:spotify_music_auth/components/roundedbutton.dart';
-import 'package:spotify_music_auth/components/roundedpassword.dart';
 import 'package:spotify_music_auth/components/textfieldcontainer.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/screens/home.dart';
+import 'package:spotify_music_auth/screens/signup.dart';
 import 'package:spotify_music_auth/services/auth.dart';
 
 class LoginPage extends StatefulWidget {
@@ -33,7 +33,6 @@ class _LoginPageState extends State<LoginPage> {
         await authService.signInPlay(email.text, password.text).then((value) {
           print(value);
           if (value != 'error') {
-            // Navigator.pushNamed(context, '/');
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => const HomePage()));
           }
@@ -158,7 +157,7 @@ class _LoginPageState extends State<LoginPage> {
                             context,
                             MaterialPageRoute(
                               builder: (context) {
-                                return const LoginPage();
+                                return const SignUp();
                               },
                             ),
                           );
