@@ -80,110 +80,113 @@ class _SignUpState extends State<SignUp> {
                 ),
               ),
               SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const Text(
-                      "SIGNUP",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: size.height * 0.03),
-                    SvgPicture.asset(
-                      "assets/signup.svg",
-                      height: size.height * 0.35,
-                    ),
-                    TextFieldContainer(
-                      child: TextFormField(
-                        validator: (val) {
-                          return val!.length < 3 ? 'Enter valid name' : null;
-                        },
-                        keyboardType: TextInputType.name,
-                        controller: name,
-                        cursorColor: kPrimaryColor,
-                        decoration: const InputDecoration(
-                          icon: Icon(
-                            Icons.person,
-                            color: kPrimaryColor,
-                          ),
-                          hintText: "Your Name",
-                          border: InputBorder.none,
-                        ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      const Text(
+                        "SIGNUP",
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                    ),
-                    TextFieldContainer(
-                      child: TextFormField(
-                        validator: (val) {
-                          return RegExp(
-                                      r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$")
-                                  .hasMatch(val!)
-                              ? null
-                              : 'Enter valid email';
-                        },
-                        keyboardType: TextInputType.emailAddress,
-                        controller: email,
-                        cursorColor: kPrimaryColor,
-                        decoration: const InputDecoration(
-                          icon: Icon(
-                            Icons.mail,
-                            color: kPrimaryColor,
-                          ),
-                          hintText: "Your Email",
-                          border: InputBorder.none,
-                        ),
+                      SizedBox(height: size.height * 0.03),
+                      SvgPicture.asset(
+                        "assets/signup.svg",
+                        height: size.height * 0.35,
                       ),
-                    ),
-                    TextFieldContainer(
-                      child: TextFormField(
-                        validator: (val) {
-                          return val!.length < 8 || val.isEmpty
-                              ? 'Password should not be less than 8'
-                              : null;
-                        },
-                        controller: password,
-                        obscureText: _isObscure,
-                        cursorColor: kPrimaryColor,
-                        decoration: InputDecoration(
-                          hintText: "Password",
-                          icon: const Icon(
-                            Icons.lock,
-                            color: kPrimaryColor,
-                          ),
-                          suffixIcon: IconButton(
+                      TextFieldContainer(
+                        child: TextFormField(
+                          validator: (val) {
+                            return val!.length < 3 ? 'Enter valid name' : null;
+                          },
+                          keyboardType: TextInputType.name,
+                          controller: name,
+                          cursorColor: kPrimaryColor,
+                          decoration: const InputDecoration(
                             icon: Icon(
-                              _isObscure
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
+                              Icons.person,
                               color: kPrimaryColor,
                             ),
-                            onPressed: () {
-                              setState(() {
-                                _isObscure = !_isObscure;
-                              });
-                            },
+                            hintText: "Your Name",
+                            border: InputBorder.none,
                           ),
-                          border: InputBorder.none,
                         ),
                       ),
-                    ),
-                    RoundedButton(
-                      text: "SIGNUP",
-                      press: () {},
-                    ),
-                    SizedBox(height: size.height * 0.03),
-                    AlreadyHaveAnAccountCheck(
-                      login: false,
-                      press: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return const LoginPage();
-                            },
+                      TextFieldContainer(
+                        child: TextFormField(
+                          validator: (val) {
+                            return RegExp(
+                                        r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$")
+                                    .hasMatch(val!)
+                                ? null
+                                : 'Enter valid email';
+                          },
+                          keyboardType: TextInputType.emailAddress,
+                          controller: email,
+                          cursorColor: kPrimaryColor,
+                          decoration: const InputDecoration(
+                            icon: Icon(
+                              Icons.mail,
+                              color: kPrimaryColor,
+                            ),
+                            hintText: "Your Email",
+                            border: InputBorder.none,
                           ),
-                        );
-                      },
-                    ),
-                  ],
+                        ),
+                      ),
+                      TextFieldContainer(
+                        child: TextFormField(
+                          validator: (val) {
+                            return val!.length < 8 || val.isEmpty
+                                ? 'Password should not be less than 8'
+                                : null;
+                          },
+                          controller: password,
+                          obscureText: _isObscure,
+                          cursorColor: kPrimaryColor,
+                          decoration: InputDecoration(
+                            hintText: "Password",
+                            icon: const Icon(
+                              Icons.lock,
+                              color: kPrimaryColor,
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _isObscure
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: kPrimaryColor,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _isObscure = !_isObscure;
+                                });
+                              },
+                            ),
+                            border: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                      RoundedButton(
+                        text: "SIGNUP",
+                        press: signUp,
+                      ),
+                      SizedBox(height: size.height * 0.03),
+                      AlreadyHaveAnAccountCheck(
+                        login: false,
+                        press: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return const LoginPage();
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
