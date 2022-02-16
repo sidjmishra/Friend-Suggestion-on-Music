@@ -4,6 +4,7 @@ import 'package:logger/logger.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/services/auth.dart';
 import 'package:spotify_music_auth/services/authenticate.dart';
+import 'package:spotify_music_auth/services/responses.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,6 +18,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String accessToken = "";
   bool _loading = false;
+
+  Map<String, dynamic> userData = {};
 
   void setStatus(String code, {String? message}) {
     var text = message ?? '';
@@ -113,6 +116,9 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     getAuthenticationToken();
     connectToSpotifyRemote();
+    UserProfileResponse(accessToken: accessToken)
+        .userData()
+        .then((value) => {print(value.values)});
     super.initState();
   }
 
@@ -142,9 +148,12 @@ class _HomePageState extends State<HomePage> {
                 color: kPrimaryColor,
               ),
             )
-          : Center(
-              child: Text(
-                  "Please! Login to your Remote Spotify App:\n$accessToken"),
+          : Column(
+              children: [
+                Center(
+                  child: Text(userData.values.toString()),
+                ),
+              ],
             ),
     );
   }
