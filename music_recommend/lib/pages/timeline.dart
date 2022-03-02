@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttershare/widgets/header.dart';
-import 'package:fluttershare/widgets/progress.dart';
+import 'package:music_recommend/widgets/header.dart';
+import 'package:music_recommend/widgets/progress.dart';
 
-final usersRef = Firestore.instance.collection('users');
+final usersRef = FirebaseFirestore.instance.collection('users');
 
 class Timeline extends StatefulWidget {
+  const Timeline({Key? key}) : super(key: key);
+
   @override
   _TimelineState createState() => _TimelineState();
 }
@@ -19,7 +21,7 @@ class _TimelineState extends State<Timeline> {
   }
 
   createUser() {
-    usersRef.document("asdfasfd").setData({
+    usersRef.doc("asdfasfd").set({
       "username": "Jeff",
       "postsCount": 0,
       "isAdmin": false,
@@ -28,9 +30,9 @@ class _TimelineState extends State<Timeline> {
 
   updateUser() async {
     final DocumentSnapshot doc =
-        await usersRef.document("34ZiYPSHk5uQkQxZBpBw").get();
+        await usersRef.doc("34ZiYPSHk5uQkQxZBpBw").get();
     if (doc.exists) {
-      doc.reference.updateData({
+      doc.reference.update({
         "username": "John",
         "postsCount": 0,
         "isAdmin": false,
@@ -40,7 +42,7 @@ class _TimelineState extends State<Timeline> {
 
   deleteUser() async {
     final DocumentSnapshot doc =
-        await usersRef.document("34ZiYPSHk5uQkQxZBpBw").get();
+        await usersRef.doc("34ZiYPSHk5uQkQxZBpBw").get();
     if (doc.exists) {
       doc.reference.delete();
     }
@@ -49,19 +51,19 @@ class _TimelineState extends State<Timeline> {
   @override
   Widget build(context) {
     return Scaffold(
-      appBar: header(context, isAppTitle: true),
+      appBar: header(context, isAppTitle: true, titleText: ''),
       body: StreamBuilder<QuerySnapshot>(
         stream: usersRef.snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return circularProgress();
           }
-          final List<Text> children = snapshot.data.documents
+          final List<Text> children = snapshot.data!.docs
               .map((doc) => Text(
                     doc['username'],
                   ))
               .toList();
-          return Container(
+          return SizedBox(
             child: ListView(
               children: children,
             ),
