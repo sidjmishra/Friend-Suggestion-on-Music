@@ -1,10 +1,15 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, unnecessary_null_comparison, deprecated_member_use
+
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:music_recommend/models/user.dart';
+import 'package:music_recommend/models/user.dart' as prefix;
 import 'package:music_recommend/pages/activity_feed.dart';
 import 'package:music_recommend/pages/create_account.dart';
 import 'package:music_recommend/pages/profile.dart';
@@ -15,24 +20,26 @@ import 'package:music_recommend/pages/upload.dart';
 //Reference Now We Can Use The Methods Login/Logout etc.
 //References Used To Access Firebase etc.
 final GoogleSignIn googleSignIn = GoogleSignIn();
-final StorageReference storageRef = FirebaseStorage.instance.ref();
+final Reference storageRef = FirebaseStorage.instance.ref();
 final FirebaseAuth _auth = FirebaseAuth.instance;
 //Path References In FireStore
-final usersRef = Firestore.instance.collection('users');
-final postsRef = Firestore.instance.collection('posts');
-final commentsRef = Firestore.instance.collection('comments');
-final activityFeedRef = Firestore.instance.collection('feed');
-final followersRef = Firestore.instance.collection('followers');
-final followingRef = Firestore.instance.collection('following');
-final timelineRef = Firestore.instance.collection('timeline');
+final usersRef = FirebaseFirestore.instance.collection('users');
+final postsRef = FirebaseFirestore.instance.collection('posts');
+final commentsRef = FirebaseFirestore.instance.collection('comments');
+final activityFeedRef = FirebaseFirestore.instance.collection('feed');
+final followersRef = FirebaseFirestore.instance.collection('followers');
+final followingRef = FirebaseFirestore.instance.collection('following');
+final timelineRef = FirebaseFirestore.instance.collection('timeline');
 final DateTime timestamp = DateTime.now();
 
 //ownerid not ownerId
 
 //Able To Pass User Data To All The Pages From Here
-User currentUser;
+prefix.User? currentUser;
 
 class Home extends StatefulWidget {
+  const Home({Key? key}) : super(key: key);
+
   @override
   _HomeState createState() => _HomeState();
 
@@ -47,10 +54,10 @@ class _HomeState extends State<Home> {
   //FireBaseMessaging Stuff
   // With The Key _scaffoldKey.currentState.showSnackbar();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  late FirebaseMessaging _firebaseMessaging;
   bool isAuth = false;
   //Make Sure To Dispose When Not On The HomePage
-  PageController pageController;
+  late PageController pageController;
   int pageIndex = 0;
 
   @override
@@ -62,7 +69,7 @@ class _HomeState extends State<Home> {
     ///Detects When User Signed In
     //account is a return type of googleSignInAccount
     googleSignIn.onCurrentUserChanged.listen((account) {
-      handleSignIn(account: account);
+      handleSignIn(account: account!);
     }, onError: (err) {
       print('Error Signing In: $err');
     });
@@ -70,14 +77,14 @@ class _HomeState extends State<Home> {
     ///ReAuthenticate user when app is opened
     //App Doesn't Keep State
     googleSignIn.signInSilently(suppressErrors: false).then((account) {
-      handleSignIn(account: account);
+      handleSignIn(account: account!);
       print('Signed In Silently\n');
     }).catchError((err) {
       print('Error Signing In: $err');
     });
   }
 
-  handleSignIn({GoogleSignInAccount account}) async {
+  handleSignIn({required GoogleSignInAccount account}) async {
     if (account != null) {
       //Await has to be used if you call an ASYNC FUNCTION
       await createUserInFirestore();
@@ -97,16 +104,14 @@ class _HomeState extends State<Home> {
 
   configurePushNotifications() {
     //Get User
-    final GoogleSignInAccount user = googleSignIn.currentUser;
+    final GoogleSignInAccount? user = googleSignIn.currentUser;
     if (Platform.isIOS) getIOSPermission();
     //Get Notification Token And Associate It With The User Data
     _firebaseMessaging.getToken().then((token) {
       print("Firebase Messaging TOKEN:::: $token\n");
       //Associate It With The User Store It. Whenever
       // It Is Needed Get It
-      usersRef
-          .document(user.id)
-          .updateData({"androidNotificationToken": token});
+      usersRef.doc(user!.id).update({"androidNotificationToken": token});
     });
 
     _firebaseMessaging.configure(
@@ -128,14 +133,14 @@ class _HomeState extends State<Home> {
         final String recipientId = message['data']['recipient'];
         //From message map notification object body property
         final String body = message['notification']['body'];
-        if (recipientId == user.id) {
+        if (recipientId == user?.id) {
           print("Notification Shown");
           SnackBar snackbar = SnackBar(
               content: Text(
             body,
             overflow: TextOverflow.ellipsis,
           ));
-          _scaffoldKey.currentState.showSnackBar(snackbar);
+          _scaffoldKey.currentState!.showSnackBar(snackbar);
         }
         print('NOTIFICATION Not Shown');
       },
@@ -155,8 +160,8 @@ class _HomeState extends State<Home> {
     // 1) Check if user exists in users collections in database
     // according to their ID
     //googleSignIn.currentUSer returns same info as account/GoogleSignIn
-    final GoogleSignInAccount user = googleSignIn.currentUser;
-    DocumentSnapshot doc = await usersRef.document(user.id).get();
+    final GoogleSignInAccount? user = googleSignIn.currentUser;
+    DocumentSnapshot doc = await usersRef.doc(user!.id).get();
 
     if (!doc.exists) {
       // 2) if the user doesn't exist, then we want to take them
@@ -172,7 +177,7 @@ class _HomeState extends State<Home> {
       // 3) get username from create account use
       // it to make new user document in users
       // collection with the user id as the document id
-      usersRef.document(user.id).setData({
+      usersRef.doc(user.id).set({
         'id': user.id,
         //If A User Backs Out It Will Create An Error == Null
         'username': username ?? 'John Doe',
@@ -182,7 +187,7 @@ class _HomeState extends State<Home> {
         'bio': " ",
         'timestamp': timestamp,
       });
-      print('${user.id}');
+      print(user.id);
       //If Document Does Not Exist All These Variables Are
       // Set In The Database. This Line Retrieves Those
       // Documents and Stores The in A User Object.
@@ -190,17 +195,17 @@ class _HomeState extends State<Home> {
       //Make user their own follower(to include their
       // posts in their timeline)
       await followersRef
-          .document(user.id)
+          .doc(user.id)
           .collection('userFollowers')
-          .document(user.id)
-          .setData({});
+          .doc(user.id)
+          .set({});
 
-      doc = await usersRef.document(user.id).get();
+      doc = await usersRef.doc(user.id).get();
     }
     //DocumentSnapshot turned into user object.
-    currentUser = User.fromDocument(doc);
+    currentUser = prefix.User.fromDocument(doc);
     print(currentUser);
-    print(currentUser.username);
+    print(currentUser!.username);
   }
 
   @override
@@ -217,7 +222,7 @@ class _HomeState extends State<Home> {
 
   login() async {
     // hold the instance of the authenticated user
-    FirebaseUser user;
+    User user;
     // flag to check whether we're signed in already
 //    bool isSignedIn = await googleSignIn.isSignedIn();
 //    if (isSignedIn) {
@@ -225,14 +230,14 @@ class _HomeState extends State<Home> {
 //      user = await _auth.currentUser();
 //    }
 //    else {
-    final GoogleSignInAccount googleUser = await googleSignIn.signIn();
+    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
+        await googleUser!.authentication;
     // get the credentials to (access / id token)
     // to sign in via Firebase Authentication
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
+    final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
-    user = (await _auth.signInWithCredential(credential)).user;
+    user = (await _auth.signInWithCredential(credential)).user!;
     //}
     print('This Is Working $user');
     //return user;
@@ -252,7 +257,7 @@ class _HomeState extends State<Home> {
 
   onTap(int pageIndex) {
     pageController.animateToPage(pageIndex,
-        duration: Duration(milliseconds: 300), curve: Curves.bounceInOut);
+        duration: const Duration(milliseconds: 300), curve: Curves.bounceInOut);
   }
 
   ///AuthScreen
@@ -264,24 +269,24 @@ class _HomeState extends State<Home> {
       key: _scaffoldKey,
       body: PageView(
         children: <Widget>[
-          Timeline(currentUser: currentUser),
+          Timeline(currentUser: currentUser!),
           ActivityFeed(),
           Upload(currentUser: currentUser),
           Search(),
           //currentUser?.id Null Aware Operator If Null
           // Don't Pass It
-          Profile(profileId: currentUser?.id),
+          Profile(profileId: currentUser!.id),
         ],
         //Controller To switch Between Pages
         controller: pageController,
         onPageChanged: onPageChanged,
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
       ),
       bottomNavigationBar: CupertinoTabBar(
         currentIndex: pageIndex,
         onTap: onTap,
         activeColor: Theme.of(context).primaryColor,
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.whatshot),
           ),
@@ -340,7 +345,7 @@ class _HomeState extends State<Home> {
               child: Container(
                 width: 260.0,
                 height: 60.0,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage('assets/images/google_signin_button.png'),
                     fit: BoxFit.cover,
