@@ -5,28 +5,36 @@ import 'package:flutter/material.dart';
 import 'package:music_recommend/widgets/header.dart';
 
 class CreateAccount extends StatefulWidget {
-  const CreateAccount({Key? key}) : super(key: key);
-
   @override
   _CreateAccountState createState() => _CreateAccountState();
 }
 
 class _CreateAccountState extends State<CreateAccount> {
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  //Needed For Forms
   final _formKey = GlobalKey<FormState>();
-  late String username;
+  //SnackBar Display
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  String username;
 
   submit() {
     final form = _formKey.currentState;
-    if (form!.validate()) {
+    //Saves every [FormField] that
+    // is a descendant of this [Form] aka _formKey.
+    if (form.validate()) {
       form.save();
-      SnackBar snackbar = SnackBar(
-        content: Text("Welcome $username!"),
+      //SnackBar
+      SnackBar snackBar = SnackBar(
+        content: Text('Welcome $username'),
       );
-      _scaffoldKey.currentState!.showSnackBar(snackbar);
-      Timer(const Duration(seconds: 2), () {
-        Navigator.pop(context, username);
-      });
+      _scaffoldKey.currentState.showSnackBar(snackBar);
+      //Timer So That Page Doesn't disappear before SnackBar
+      Timer(
+        Duration(seconds: 2),
+        () {
+          //Sends Username back
+          Navigator.pop(context, username);
+        },
+      );
     }
   }
 
@@ -34,67 +42,73 @@ class _CreateAccountState extends State<CreateAccount> {
   Widget build(BuildContext parentContext) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: header(context,
-          titleText: "Set up your profile", removeBackButton: true),
+      appBar: header(
+        context,
+        titleText: 'Set Up Your Profile',
+        removeBackButton: true,
+      ),
       body: ListView(
         children: <Widget>[
-          SizedBox(
+          Container(
             child: Column(
               children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.only(top: 25),
-                  child: Center(
-                    child: Text(
-                      "Create a username",
-                      style: TextStyle(fontSize: 25),
-                    ),
+                Padding(
+                  padding: EdgeInsets.only(top: 25.0),
+                  child: Text(
+                    'Create A Username',
+                    style: TextStyle(fontSize: 25.0),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: SizedBox(
+                  padding: EdgeInsets.all(16.0),
+                  child: Container(
+                    //Form Has  A FormKey So That You Can Refer
+                    // To It And The onSaved Value
                     child: Form(
-                      key: _formKey,
-                      child: TextFormField(
-                        autovalidateMode: AutovalidateMode.always,
-                        autocorrect: false,
-                        autofocus: true,
-                        validator: (val) {
-                          if (val!.trim().length < 3 || val.isEmpty) {
-                            return "Username too short";
-                          } else if (val.trim().length > 12) {
-                            return "Username too long";
-                          } else {
-                            return null;
-                          }
-                        },
-                        onSaved: (val) => username = val!,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: "Username",
-                          labelStyle: TextStyle(fontSize: 15),
-                          hintText: "Must be at least 3 characters",
-                        ),
-                      ),
-                    ),
+                        key: _formKey,
+                        autovalidate: true,
+                        child: TextFormField(
+                          validator: (val) {
+                            //Returns the string without any leading and
+                            // trailing whitespace. If the string
+                            // contains leading or trailing whitespace,
+                            // a new string with no leading and no trailing
+                            // whitespace is returned:
+                            if (val.trim().length < 3 || val.isEmpty) {
+                              return 'Username too short';
+                            } else if (val.trim().length > 16) {
+                              return 'Username Too Long';
+                            } else {
+                              return null;
+                            }
+                          },
+                          onSaved: (val) => username = val,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Username',
+                            labelStyle: TextStyle(fontSize: 15.0),
+                            hintText: 'Must Be atleast 3 Characters',
+                          ),
+                        )),
                   ),
                 ),
                 GestureDetector(
                   onTap: submit,
                   child: Container(
                     height: 50,
-                    width: 350,
+                    width: 200,
                     decoration: BoxDecoration(
                       color: Colors.blue,
-                      borderRadius: BorderRadius.circular(7),
+                      borderRadius: BorderRadius.circular(7.0),
                     ),
-                    child: const Center(
+                    child: Center(
                       child: Text(
-                        "Submit",
+                        'Submit',
                         style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold),
+                          color: Colors.white,
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
