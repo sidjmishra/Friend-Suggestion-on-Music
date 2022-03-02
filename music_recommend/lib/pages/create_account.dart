@@ -1,5 +1,8 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:music_recommend/widgets/header.dart';
 
 class CreateAccount extends StatefulWidget {
   const CreateAccount({Key? key}) : super(key: key);
@@ -11,17 +14,17 @@ class CreateAccount extends StatefulWidget {
 class _CreateAccountState extends State<CreateAccount> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
-  String username;
+  late String username;
 
   submit() {
     final form = _formKey.currentState;
-    if (form.validate()) {
+    if (form!.validate()) {
       form.save();
       SnackBar snackbar = SnackBar(
         content: Text("Welcome $username!"),
       );
-      _scaffoldKey.currentState.showSnackBar(snackbar);
-      Timer(Duration(seconds: 2), () {
+      _scaffoldKey.currentState!.showSnackBar(snackbar);
+      Timer(const Duration(seconds: 2), () {
         Navigator.pop(context, username);
       });
     }
@@ -35,10 +38,10 @@ class _CreateAccountState extends State<CreateAccount> {
           titleText: "Set up your profile", removeBackButton: true),
       body: ListView(
         children: <Widget>[
-          Container(
+          SizedBox(
             child: Column(
               children: <Widget>[
-                Padding(
+                const Padding(
                   padding: EdgeInsets.only(top: 25),
                   child: Center(
                     child: Text(
@@ -48,8 +51,8 @@ class _CreateAccountState extends State<CreateAccount> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Container(
+                  padding: const EdgeInsets.all(16),
+                  child: SizedBox(
                     child: Form(
                       key: _formKey,
                       child: TextFormField(
@@ -57,7 +60,7 @@ class _CreateAccountState extends State<CreateAccount> {
                         autocorrect: false,
                         autofocus: true,
                         validator: (val) {
-                          if (val.trim().length < 3 || val.isEmpty) {
+                          if (val!.trim().length < 3 || val.isEmpty) {
                             return "Username too short";
                           } else if (val.trim().length > 12) {
                             return "Username too long";
@@ -65,8 +68,8 @@ class _CreateAccountState extends State<CreateAccount> {
                             return null;
                           }
                         },
-                        onSaved: (val) => username = val,
-                        decoration: InputDecoration(
+                        onSaved: (val) => username = val!,
+                        decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Username",
                           labelStyle: TextStyle(fontSize: 15),
@@ -85,7 +88,7 @@ class _CreateAccountState extends State<CreateAccount> {
                       color: Colors.blue,
                       borderRadius: BorderRadius.circular(7),
                     ),
-                    child: Center(
+                    child: const Center(
                       child: Text(
                         "Submit",
                         style: TextStyle(
