@@ -12,6 +12,6 @@ cachedNetworkImage(String mediaUrl) {
       ),
       padding: EdgeInsets.all(20.0),
     ),
-    errorWidget: (context, url, error) => Icon(Icons.error),
+    errorWidget: (context, url, error) => const Icon(Icons.error),
   );
 }

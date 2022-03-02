@@ -1,6 +1,18 @@
+// ignore_for_file: avoid_print
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:music_recommend/pages/home.dart';
+import 'package:music_recommend/pages/post_screen.dart';
+import 'package:music_recommend/pages/profile.dart';
+import 'package:music_recommend/widgets/header.dart';
+import 'package:music_recommend/widgets/progress.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class ActivityFeed extends StatefulWidget {
+  const ActivityFeed({Key? key}) : super(key: key);
+
   @override
   _ActivityFeedState createState() => _ActivityFeedState();
 }
@@ -8,18 +20,18 @@ class ActivityFeed extends StatefulWidget {
 class _ActivityFeedState extends State<ActivityFeed> {
   getActivityFeed() async {
     QuerySnapshot snapshot = await activityFeedRef
-        .document(currentUser.id)
+        .doc(currentUser!.id)
         .collection('feedItems')
         .orderBy('timestamp', descending: true)
         .limit(50)
-        .getDocuments();
+        .get();
     List<ActivityFeedItem> feedItems = [];
-    snapshot.documents.forEach((doc) {
+    snapshot.docs.forEach((doc) {
       feedItems.add(ActivityFeedItem.fromDocument(doc));
     });
     //Print It To Check It Out
     //forEach Iterates Over Each Item
-    snapshot.documents.forEach((doc) {
+    snapshot.docs.forEach((doc) {
       print('Activity Feed Item: ${doc.data}');
     });
     print('Activity Feed Items Length ${feedItems.length}');
@@ -27,8 +39,8 @@ class _ActivityFeedState extends State<ActivityFeed> {
   }
 
   Widget emptyActivityFeed() {
-    return Center(
-      child: Container(
+    return const Center(
+      child: SizedBox(
         child: Text(
           'No Activity Just Yet',
           style: TextStyle(
@@ -47,7 +59,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
       appBar: header(context, titleText: 'Activity Feed'),
       body: StreamBuilder<QuerySnapshot>(
         stream: activityFeedRef
-            .document(currentUser.id)
+            .doc(currentUser!.id)
             .collection('feedItems')
             .orderBy('timestamp', descending: true)
             .limit(20)
@@ -67,7 +79,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
           });
 
           return Container(
-            child: feedItems.length > 0
+            child: feedItems.isNotEmpty
                 ? ListView(
                     children: feedItems,
                   )
@@ -80,8 +92,8 @@ class _ActivityFeedState extends State<ActivityFeed> {
 }
 
 //Widget ??? Why
-Widget mediaPreview;
-String activityItemText;
+Widget? mediaPreview;
+String? activityItemText;
 
 //Model
 
@@ -98,16 +110,17 @@ class ActivityFeedItem extends StatelessWidget {
   final String commentData;
   final Timestamp timestamp;
 
-  ActivityFeedItem({
-    this.username,
-    this.userId,
-    this.type,
-    this.mediaUrl,
-    this.postId,
-    this.userProfileImg,
-    this.commentData,
-    this.timestamp,
-  });
+  const ActivityFeedItem({
+    Key? key,
+    required this.username,
+    required this.userId,
+    required this.type,
+    required this.mediaUrl,
+    required this.postId,
+    required this.userProfileImg,
+    required this.commentData,
+    required this.timestamp,
+  }) : super(key: key);
 
   factory ActivityFeedItem.fromDocument(DocumentSnapshot doc) {
     return ActivityFeedItem(
@@ -130,7 +143,7 @@ class ActivityFeedItem extends StatelessWidget {
       MaterialPageRoute(
         builder: (context) => PostScreen(
           postId: postId,
-          userId: currentUser.id,
+          userId: currentUser!.id,
         ),
       ),
     );
@@ -142,7 +155,7 @@ class ActivityFeedItem extends StatelessWidget {
       mediaPreview = GestureDetector(
         //Passed In Context To Use Navigator
         onTap: () => showPost(context),
-        child: Container(
+        child: SizedBox(
           height: 50.0,
           width: 50.0,
           child: AspectRatio(
@@ -159,7 +172,7 @@ class ActivityFeedItem extends StatelessWidget {
         ),
       );
     } else {
-      mediaPreview = Text('');
+      mediaPreview = const Text('');
     }
     if (type == 'like') {
       activityItemText = ' Liked Your Post';
@@ -176,7 +189,7 @@ class ActivityFeedItem extends StatelessWidget {
   Widget build(BuildContext context) {
     configureMediaPreview(context);
     return Padding(
-      padding: EdgeInsets.only(bottom: 2.0),
+      padding: const EdgeInsets.only(bottom: 2.0),
       child: Container(
         color: Colors.white54,
         child: ListTile(
@@ -185,14 +198,14 @@ class ActivityFeedItem extends StatelessWidget {
             child: RichText(
                 overflow: TextOverflow.ellipsis,
                 text: TextSpan(
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14.0,
                       color: Colors.black,
                     ),
                     children: [
                       TextSpan(
                         text: username,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -220,7 +233,7 @@ class ActivityFeedItem extends StatelessWidget {
   }
 }
 
-showProfile(BuildContext context, {String profileId}) {
+showProfile(BuildContext context, {required String profileId}) {
   Navigator.push(
     context,
     MaterialPageRoute(

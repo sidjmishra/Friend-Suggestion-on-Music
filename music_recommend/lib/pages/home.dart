@@ -247,8 +247,8 @@ class _HomeState extends State<Home> {
         children: <Widget>[
           Timeline(currentUser: currentUser!),
           ActivityFeed(),
-          Upload(currentUser: currentUser),
-          Search(),
+          Upload(currentUser: currentUser!),
+          const Search(),
           //currentUser?.id Null Aware Operator If Null
           // Don't Pass It
           Profile(profileId: currentUser!.id),

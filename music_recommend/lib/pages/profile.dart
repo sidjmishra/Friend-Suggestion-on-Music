@@ -1,10 +1,21 @@
+// ignore_for_file: avoid_print
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:music_recommend/models/user.dart';
+import 'package:music_recommend/pages/edit_profile.dart';
+import 'package:music_recommend/pages/home.dart';
 import 'package:music_recommend/widgets/header.dart';
+import 'package:music_recommend/widgets/post.dart';
+import 'package:music_recommend/widgets/post_tile.dart';
+import 'package:music_recommend/widgets/progress.dart';
 
 class Profile extends StatefulWidget {
   final String profileId;
 
-  Profile({this.profileId});
+  const Profile({Key? key, required this.profileId}) : super(key: key);
 
   @override
   _ProfileState createState() => _ProfileState();
@@ -14,7 +25,7 @@ class _ProfileState extends State<Profile> {
   //Profile page could be for any profile
   // this is the current user
   //Same As (currentUser != null) ? currentUser.id : null
-  final String currentUserId = currentUser?.id;
+  final String currentUserId = currentUser!.id;
   bool isFollowing = false;
   String postOrientation = 'list';
   bool isLoading = false;
@@ -36,9 +47,9 @@ class _ProfileState extends State<Profile> {
   //If Doc Exist You are Following if null doc.exists is false
   checkIfFollowing() async {
     DocumentSnapshot doc = await followersRef
-        .document(widget.profileId)
+        .doc(widget.profileId)
         .collection('userFollowers')
-        .document(currentUserId)
+        .doc(currentUserId)
         .get();
     setState(() {
       isFollowing = doc.exists;
@@ -47,21 +58,21 @@ class _ProfileState extends State<Profile> {
 
   getFollowers() async {
     QuerySnapshot snapshot = await followersRef
-        .document(widget.profileId)
+        .doc(widget.profileId)
         .collection('userFollowers')
-        .getDocuments();
+        .get();
     setState(() {
-      followerCount = snapshot.documents.length;
+      followerCount = snapshot.docs.length;
     });
   }
 
   getFollowing() async {
     QuerySnapshot snapshot = await followingRef
-        .document(widget.profileId)
+        .doc(widget.profileId)
         .collection('userFollowing')
-        .getDocuments();
+        .get();
     setState(() {
-      followingCount = snapshot.documents.length;
+      followingCount = snapshot.docs.length;
     });
   }
 
@@ -70,42 +81,42 @@ class _ProfileState extends State<Profile> {
       isLoading = true;
     });
     QuerySnapshot snapshot = await postsRef
-        .document(widget.profileId)
+        .doc(widget.profileId)
         .collection('userPosts')
         .orderBy('timestamp', descending: true)
-        .getDocuments();
+        .get();
 
     setState(() {
       isLoading = false;
-      postCount = snapshot.documents.length;
+      postCount = snapshot.docs.length;
       //Iterate over snapshot.documents with map
       //For each Doc deserialize post document
       // snapshot with Post.fromDocument pass in doc to it
       // In the end call to list to make it a list
-      posts = snapshot.documents.map((doc) => Post.fromDocument(doc)).toList();
+      posts = snapshot.docs.map((doc) => Post.fromDocument(doc)).toList();
       //Documents is a list of all the stuff in snapshot
       //map goes over each document and returns 1 doc each
       //each doc passed into factory and all are turned into a list
     });
   }
 
-  buildCountColumn({String label, int count}) {
+  buildCountColumn({required String label, required int count}) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Text(
           count.toString(),
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 22.0,
             fontWeight: FontWeight.bold,
           ),
         ),
         Container(
-          margin: EdgeInsets.only(top: 4.0),
+          margin: const EdgeInsets.only(top: 4.0),
           child: Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.grey,
               fontSize: 15.0,
               fontWeight: FontWeight.w400,
@@ -123,11 +134,13 @@ class _ProfileState extends State<Profile> {
             builder: (context) => EditProfile(currentUserId: currentUserId)));
   }
 
-  Container buildButton({String text, Function function}) {
+  Container buildButton({required String text, required Function function}) {
     return Container(
-      padding: EdgeInsets.only(top: 2.0),
-      child: FlatButton(
-          onPressed: function,
+      padding: const EdgeInsets.only(top: 2.0),
+      child: TextButton(
+          onPressed: () {
+            function;
+          },
           child: Container(
             width: 250.0,
             height: 27.0,
@@ -174,9 +187,9 @@ class _ProfileState extends State<Profile> {
     });
     //remove follower
     followersRef
-        .document(widget.profileId)
+        .doc(widget.profileId)
         .collection('userFollowers')
-        .document(currentUserId)
+        .doc(currentUserId)
         //doc is a document snapshot
         .get()
         .then((doc) {
@@ -188,9 +201,9 @@ class _ProfileState extends State<Profile> {
     });
     //remove following
     followingRef
-        .document(currentUserId)
+        .doc(currentUserId)
         .collection('userFollowing')
-        .document(widget.profileId)
+        .doc(widget.profileId)
         .get()
         .then((doc) {
       if (doc.exists) {
@@ -201,9 +214,9 @@ class _ProfileState extends State<Profile> {
     });
     //Delete activity feed item
     activityFeedRef
-        .document(widget.profileId)
+        .doc(widget.profileId)
         .collection('feedItems')
-        .document(currentUserId)
+        .doc(currentUserId)
         .get()
         .then((doc) {
       if (doc.exists) {
@@ -221,29 +234,29 @@ class _ProfileState extends State<Profile> {
     //Make Auth User Follower Of That User
     // (Update Their Followers Collection)
     followersRef
-        .document(widget.profileId)
+        .doc(widget.profileId)
         .collection('userFollowers')
-        .document(currentUserId)
-        .setData({});
+        .doc(currentUserId)
+        .set({});
     //Put that user on your following collection (Update
     //your following collection)
     followingRef
-        .document(currentUserId)
+        .doc(currentUserId)
         .collection('userFollowing')
-        .document(widget.profileId)
-        .setData({});
+        .doc(widget.profileId)
+        .set({});
     //add activity feed item for tht user to notify about
     // new follower (us)
     activityFeedRef
-        .document(widget.profileId)
+        .doc(widget.profileId)
         .collection('feedItems')
-        .document(currentUserId)
-        .setData({
+        .doc(currentUserId)
+        .set({
       'type': 'follow',
       'ownerId': widget.profileId,
-      'username': currentUser.username,
+      'username': currentUser!.username,
       'userId': currentUserId,
-      'userProfileImg': currentUser.photoUrl,
+      'userProfileImg': currentUser!.photoUrl,
       'timestamp': timestamp,
     });
   }
@@ -254,16 +267,16 @@ class _ProfileState extends State<Profile> {
     //Resolves It Once Needs To Be Refreshed To See New data
     //Should Be A Stream Builder Here
     return FutureBuilder(
-      future: usersRef.document(widget.profileId).get(),
+      future: usersRef.doc(widget.profileId).get(),
       //Resolve Value Available In Our Builder Function
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return circularProgress();
         }
         //Deserialize
-        User user = User.fromDocument(snapshot.data);
+        User user = User.fromDocument(snapshot.data as DocumentSnapshot);
         return Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             children: <Widget>[
               Row(
@@ -303,10 +316,10 @@ class _ProfileState extends State<Profile> {
               ///USERNAME
               Container(
                 alignment: Alignment.centerLeft,
-                padding: EdgeInsets.only(top: 12.0),
+                padding: const EdgeInsets.only(top: 12.0),
                 child: Text(
                   user.username,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16.0,
                   ),
@@ -316,17 +329,17 @@ class _ProfileState extends State<Profile> {
               ///DISPLAYNAME
               Container(
                 alignment: Alignment.centerLeft,
-                padding: EdgeInsets.only(top: 4.0),
+                padding: const EdgeInsets.only(top: 4.0),
                 child: Text(
                   user.displayName ?? 'My Name',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
               Container(
                 alignment: Alignment.centerLeft,
-                padding: EdgeInsets.only(top: 2.0),
+                padding: const EdgeInsets.only(top: 2.0),
                 //child: Text(user.bio),
                 child: Text(
                   user.bio ?? 'Work In Progress',
@@ -344,12 +357,12 @@ class _ProfileState extends State<Profile> {
     if (isLoading) {
       return circularProgress();
     } else if (posts.isEmpty) {
-      return Container(
+      return SizedBox(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             SvgPicture.asset('assets/images/no_content.svg', height: 260.0),
-            Padding(
+            const Padding(
               padding: EdgeInsets.only(top: 20.0),
               child: Text(
                 'No Posts',
@@ -380,7 +393,7 @@ class _ProfileState extends State<Profile> {
         mainAxisSpacing: 1.5,
         crossAxisSpacing: 1.5,
         shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         children: gridTiles,
       );
     } else if (postOrientation == 'list') {
@@ -402,14 +415,14 @@ class _ProfileState extends State<Profile> {
       children: <Widget>[
         IconButton(
           onPressed: () => setPostOrientation('grid'),
-          icon: Icon(Icons.grid_on),
+          icon: const Icon(Icons.grid_on),
           color: postOrientation == 'grid'
               ? Theme.of(context).primaryColor
               : Colors.grey,
         ),
         IconButton(
           onPressed: () => setPostOrientation('list'),
-          icon: Icon(Icons.list),
+          icon: const Icon(Icons.list),
           color: postOrientation == 'list'
               ? Theme.of(context).primaryColor
               : Colors.grey,
@@ -425,9 +438,9 @@ class _ProfileState extends State<Profile> {
       body: ListView(
         children: <Widget>[
           buildProfileHeader(),
-          Divider(),
+          const Divider(),
           buildTogglePostOrientation(),
-          Divider(
+          const Divider(
             height: 0.0,
           ),
           buildProfilePosts(),

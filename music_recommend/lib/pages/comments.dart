@@ -1,21 +1,30 @@
+// ignore_for_file: no_logic_in_create_state, avoid_print, deprecated_member_use
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:music_recommend/pages/home.dart';
+import 'package:music_recommend/widgets/header.dart';
+import 'package:music_recommend/widgets/progress.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class Comments extends StatefulWidget {
   final String postId;
   final String postOwnerId;
   final String postMediaUrl;
 
-  Comments({
-    this.postId,
-    this.postOwnerId,
-    this.postMediaUrl,
-  });
+  const Comments({
+    Key? key,
+    required this.postId,
+    required this.postOwnerId,
+    required this.postMediaUrl,
+  }) : super(key: key);
 
   @override
   CommentsState createState() => CommentsState(
-        postId: this.postId,
-        postOwnerId: this.postOwnerId,
-        postMediaUrl: this.postMediaUrl,
+        postId: postId,
+        postOwnerId: postOwnerId,
+        postMediaUrl: postMediaUrl,
       );
 }
 
@@ -26,15 +35,15 @@ class CommentsState extends State<Comments> {
   final String postMediaUrl;
 
   CommentsState({
-    this.postId,
-    this.postOwnerId,
-    this.postMediaUrl,
+    required this.postId,
+    required this.postOwnerId,
+    required this.postMediaUrl,
   });
 
   buildComments() {
     return StreamBuilder<QuerySnapshot>(
         stream: commentsRef
-            .document(postId)
+            .doc(postId)
             .collection('comments')
             .orderBy('timeStamp', descending: false)
             .snapshots(),
@@ -66,25 +75,25 @@ class CommentsState extends State<Comments> {
   }
 
   addComment() {
-    commentsRef.document(postId).collection('comments').add({
-      'username': currentUser.username,
+    commentsRef.doc(postId).collection('comments').add({
+      'username': currentUser!.username,
       'comment': commentController.text,
       'timeStamp': timestamp,
-      'avatarUrl': currentUser.photoUrl,
-      'userId': currentUser.id,
+      'avatarUrl': currentUser!.photoUrl,
+      'userId': currentUser!.id,
     });
-    bool isNotPostOwner = postOwnerId != currentUser.id;
+    bool isNotPostOwner = postOwnerId != currentUser!.id;
     if (isNotPostOwner) {
       //Add A Notification To Owners Activity Feed
-      activityFeedRef.document(postOwnerId).collection('feedItems').add({
+      activityFeedRef.doc(postOwnerId).collection('feedItems').add({
         'type': 'comment',
         'commentData': commentController.text,
         //User Who Liked The Post
         'timestamp': timestamp,
         'postId': postId,
-        'userId': currentUser.id,
-        'username': currentUser.username,
-        'userProfileImg': currentUser.photoUrl,
+        'userId': currentUser!.id,
+        'username': currentUser!.username,
+        'userProfileImg': currentUser!.photoUrl,
         'mediaUrl': postMediaUrl,
       });
     }
@@ -99,18 +108,18 @@ class CommentsState extends State<Comments> {
       body: Column(
         children: <Widget>[
           Expanded(child: buildComments()),
-          Divider(),
+          const Divider(),
           ListTile(
             title: TextFormField(
               controller: commentController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Write A Comment...',
               ),
             ),
             trailing: OutlineButton(
               onPressed: addComment,
               borderSide: BorderSide.none,
-              child: Text('Post'),
+              child: const Text('Post'),
             ),
           )
         ],
@@ -126,13 +135,14 @@ class Comment extends StatelessWidget {
   final String comment;
   final Timestamp timestamp;
 
-  Comment({
-    this.username,
-    this.userId,
-    this.avatarUrl,
-    this.comment,
-    this.timestamp,
-  });
+  const Comment({
+    Key? key,
+    required this.username,
+    required this.userId,
+    required this.avatarUrl,
+    required this.comment,
+    required this.timestamp,
+  }) : super(key: key);
 
   factory Comment.fromDocument(DocumentSnapshot doc) {
     return Comment(

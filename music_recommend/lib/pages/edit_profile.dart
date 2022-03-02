@@ -1,9 +1,16 @@
+// ignore_for_file: deprecated_member_use
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:flutter/material.dart";
+import 'package:music_recommend/models/user.dart';
+import 'package:music_recommend/pages/home.dart';
+import 'package:music_recommend/widgets/progress.dart';
 
 class EditProfile extends StatefulWidget {
   final String currentUserId;
 
-  EditProfile({this.currentUserId});
+  const EditProfile({Key? key, required this.currentUserId}) : super(key: key);
 
   @override
   _EditProfileState createState() => _EditProfileState();
@@ -15,7 +22,7 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController displayNameController = TextEditingController();
   TextEditingController bioController = TextEditingController();
   bool isLoading = false;
-  User user;
+  late User user;
   bool _displayNameValid = true;
   bool _bioValid = true;
 
@@ -31,7 +38,7 @@ class _EditProfileState extends State<EditProfile> {
       isLoading = true;
     });
     //Get And Deserialize User Data
-    DocumentSnapshot doc = await usersRef.document(widget.currentUserId).get();
+    DocumentSnapshot doc = await usersRef.doc(widget.currentUserId).get();
     user = User.fromDocument(doc);
     displayNameController.text = user.displayName;
     bioController.text = user.bio;
@@ -45,7 +52,7 @@ class _EditProfileState extends State<EditProfile> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Padding(
+        const Padding(
           padding: EdgeInsets.only(top: 12.0),
           child: Text(
             'Display Name',
@@ -68,7 +75,7 @@ class _EditProfileState extends State<EditProfile> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Padding(
+        const Padding(
           padding: EdgeInsets.only(top: 12.0),
           child: Text(
             'Bio',
@@ -99,19 +106,20 @@ class _EditProfileState extends State<EditProfile> {
     });
 
     if (_displayNameValid && _bioValid) {
-      usersRef.document(widget.currentUserId).updateData({
+      usersRef.doc(widget.currentUserId).update({
         'displayName': displayNameController.text,
         'bio': bioController.text,
       });
-      SnackBar snackbar = SnackBar(content: Text('Profile Updated'));
-      _scaffoldKey.currentState.showSnackBar(snackbar);
+      SnackBar snackbar = const SnackBar(content: Text('Profile Updated'));
+      _scaffoldKey.currentState!.showSnackBar(snackbar);
     }
   }
 
   ///Logout
   logout() async {
     await googleSignIn.signOut();
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const Home()));
   }
 
   @override
@@ -121,7 +129,7 @@ class _EditProfileState extends State<EditProfile> {
       key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text(
+        title: const Text(
           'Edit Profile',
           style: TextStyle(
             color: Colors.black,
@@ -129,7 +137,7 @@ class _EditProfileState extends State<EditProfile> {
         ),
         actions: <Widget>[
           IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.done,
               size: 30.0,
               color: Colors.green,
@@ -143,11 +151,11 @@ class _EditProfileState extends State<EditProfile> {
           ? circularProgress()
           : ListView(
               children: <Widget>[
-                Container(
+                SizedBox(
                   child: Column(
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                           top: 16.0,
                           bottom: 8.0,
                         ),
@@ -159,7 +167,7 @@ class _EditProfileState extends State<EditProfile> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(16.0),
+                        padding: const EdgeInsets.all(16.0),
                         child: Column(
                           children: <Widget>[
                             buildDisplayNameField(),
@@ -179,14 +187,14 @@ class _EditProfileState extends State<EditProfile> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(16.0),
+                        padding: const EdgeInsets.all(16.0),
                         child: FlatButton.icon(
                             onPressed: logout,
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.cancel,
                               color: Colors.red,
                             ),
-                            label: Text(
+                            label: const Text(
                               'Logout',
                               style: TextStyle(
                                 color: Colors.red,

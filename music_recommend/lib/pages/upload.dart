@@ -1,9 +1,24 @@
+// ignore_for_file: avoid_print
+
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:music_recommend/models/user.dart';
+import 'package:music_recommend/pages/home.dart';
+import 'package:music_recommend/widgets/progress.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
+import 'package:image/image.dart' as Im;
 
 class Upload extends StatefulWidget {
   final User currentUser;
 
-  Upload({this.currentUser});
+  const Upload({Key? key, required this.currentUser}) : super(key: key);
 
   @override
   _UploadState createState() => _UploadState();
@@ -17,17 +32,17 @@ class _UploadState extends State<Upload>
   //Once This File Is Not Null And Is In State
   // We Need To Change View
   //Has to be stored in state
-  File file;
+  File? file;
   bool isUpLoading = false;
-  String postId = Uuid().v4();
+  String postId = const Uuid().v4();
 
   handleTakePhoto(context) async {
     Navigator.pop(context);
-    File file = await ImagePicker.pickImage(
+    File file = (await ImagePicker.pickImage(
       source: ImageSource.camera,
       maxHeight: 675,
       maxWidth: 960,
-    );
+    )) as File;
     setState(() {
       this.file = file;
     });
@@ -36,9 +51,9 @@ class _UploadState extends State<Upload>
   //Can't Do On IOS
   handleChooseFromGallery(context) async {
     Navigator.pop(context);
-    File file = await ImagePicker.pickImage(
+    File file = (await ImagePicker.pickImage(
       source: ImageSource.gallery,
-    );
+    )) as File;
     setState(() {
       this.file = file;
     });
@@ -49,18 +64,18 @@ class _UploadState extends State<Upload>
       context: parentContext,
       builder: (context) {
         return SimpleDialog(
-          title: Text('Create Post'),
-          children: <Widget>[
+          title: const Text('Create Post'),
+          children: [
             SimpleDialogOption(
-              child: Text('Photo with Camera'),
+              child: const Text('Photo with Camera'),
               onPressed: () => handleTakePhoto(context),
             ),
             SimpleDialogOption(
-              child: Text('Image From Gallery'),
+              child: const Text('Image From Gallery'),
               onPressed: () => handleChooseFromGallery(context),
             ),
             SimpleDialogOption(
-              child: Text(
+              child: const Text(
                 'Cancel',
                 style: TextStyle(color: Colors.red),
               ),
@@ -74,25 +89,29 @@ class _UploadState extends State<Upload>
 
   Container buildSplashScreen() {
     return Container(
-      color: Theme.of(context).accentColor.withOpacity(.6),
+      color: Theme.of(context).colorScheme.secondary.withOpacity(.6),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           SvgPicture.asset('assets/images/upload.svg', height: 260.0),
           Padding(
-            padding: EdgeInsets.only(top: 20.0),
-            child: RaisedButton(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
+            padding: const EdgeInsets.only(top: 20.0),
+            child: ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.deepOrange),
+                shape: MaterialStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
               ),
-              child: Text(
+              child: const Text(
                 'Upload Image',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 22.00,
                 ),
               ),
-              color: Colors.deepOrange,
               onPressed: () => selectImage(context),
             ),
           )
@@ -111,29 +130,32 @@ class _UploadState extends State<Upload>
     final tempDir = await getTemporaryDirectory();
     final path = tempDir.path;
     //Read Image File We Have In State Putting It In imageFile
-    Im.Image imageFile = Im.decodeImage(file.readAsBytesSync());
+    Im.Image? imageFile = Im.decodeImage(file!.readAsBytesSync());
     final compressesImageFile = File('$path/img_$postId.jpg')
-      ..writeAsBytesSync(Im.encodeJpg(imageFile, quality: 50));
+      ..writeAsBytesSync(Im.encodeJpg(imageFile!, quality: 50));
     setState(() {
       file = compressesImageFile;
     });
   }
 
   Future<String> uploadImage(imageFile) async {
-    StorageUploadTask uploadTask =
+    UploadTask uploadTask =
         storageRef.child('post_$postId.jpg').putFile(imageFile);
-    StorageTaskSnapshot storageSnap = await uploadTask.onComplete;
+    TaskSnapshot storageSnap =
+        await uploadTask.whenComplete(() => print("Completed"));
     String downloadUrl = await storageSnap.ref.getDownloadURL();
     return downloadUrl;
   }
 
   createPostInFirestore(
-      {String mediaUrl, String location, String description}) {
+      {required String mediaUrl,
+      required String location,
+      required String description}) {
     postsRef
-        .document(widget.currentUser.id)
+        .doc(widget.currentUser.id)
         .collection('userPosts')
-        .document(postId)
-        .setData({
+        .doc(postId)
+        .set({
       'postId': postId,
       'ownerid': widget.currentUser.id,
       'username': widget.currentUser.username,
@@ -161,7 +183,7 @@ class _UploadState extends State<Upload>
     setState(() {
       file = null;
       isUpLoading = false;
-      postId = Uuid().v4();
+      postId = const Uuid().v4();
     });
   }
 
@@ -171,7 +193,7 @@ class _UploadState extends State<Upload>
       appBar: AppBar(
         backgroundColor: Colors.white70,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           //onPressed: clearImage,
           onPressed: () {
             locationController.clear();
@@ -179,19 +201,19 @@ class _UploadState extends State<Upload>
             clearImage();
           },
         ),
-        title: Text(
+        title: const Text(
           'Caption Post',
           style: TextStyle(color: Colors.black),
         ),
         actions: <Widget>[
-          FlatButton(
+          TextButton(
             //Null disables Button while loading
             //()=> handleSubmit is fat arrowed, if not it will
             // be called as soon as the button isn't null/enabled vs
             // being called only when pressed. It waits to be
             // pressed instead of being activated immediately
             onPressed: isUpLoading ? null : () => handleSubmit(),
-            child: Text(
+            child: const Text(
               'Post',
               style: TextStyle(
                 color: Colors.blueAccent,
@@ -204,8 +226,8 @@ class _UploadState extends State<Upload>
       ),
       body: ListView(
         children: <Widget>[
-          isUpLoading ? linearProgress() : Text(''),
-          Container(
+          isUpLoading ? linearProgress() : const Text(''),
+          SizedBox(
             height: 220.0,
             //Take up 80 percent of screen
             width: MediaQuery.of(context).size.width * 0.8,
@@ -216,13 +238,13 @@ class _UploadState extends State<Upload>
                   decoration: BoxDecoration(
                       image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: FileImage(file),
+                    image: FileImage(file!),
                   )),
                 ),
               ),
             ),
           ),
-          Padding(
+          const Padding(
             padding: EdgeInsets.only(top: 10.0),
           ),
           ListTile(
@@ -230,29 +252,29 @@ class _UploadState extends State<Upload>
               backgroundImage:
                   CachedNetworkImageProvider(widget.currentUser.photoUrl),
             ),
-            title: Container(
+            title: SizedBox(
               width: 250.0,
               child: TextField(
                 controller: captionController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Write A Caption...',
                   border: InputBorder.none,
                 ),
               ),
             ),
           ),
-          Divider(),
+          const Divider(),
           ListTile(
-            leading: Icon(
+            leading: const Icon(
               Icons.pin_drop,
               color: Colors.orange,
               size: 35.0,
             ),
-            title: Container(
+            title: SizedBox(
               width: 250.0,
               child: TextField(
                 controller: locationController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Where Was The Photo Taken',
                   border: InputBorder.none,
                 ),
@@ -263,17 +285,21 @@ class _UploadState extends State<Upload>
             width: 200.0,
             height: 100.00,
             alignment: Alignment.center,
-            child: RaisedButton.icon(
-              label: Text(
+            child: ElevatedButton.icon(
+              label: const Text(
                 'USE CURRENT LOCATION',
                 style: TextStyle(color: Colors.white),
               ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.0),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.blue),
+                shape: MaterialStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                ),
               ),
-              color: Colors.blue,
               onPressed: getUserLocation,
-              icon: Icon(
+              icon: const Icon(
                 Icons.my_location,
                 color: Colors.white,
               ),
@@ -285,7 +311,7 @@ class _UploadState extends State<Upload>
   }
 
   getUserLocation() async {
-    Position position = await Geolocator().getCurrentPosition(
+    Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );
     List<Placemark> placeMarks = await Geolocator().placemarkFromCoordinates(

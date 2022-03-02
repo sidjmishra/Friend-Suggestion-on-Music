@@ -5,10 +5,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:music_recommend/models/user.dart';
+import 'package:music_recommend/pages/activity_feed.dart';
 import 'package:music_recommend/pages/timeline.dart';
 import 'package:music_recommend/widgets/progress.dart';
 
 class Search extends StatefulWidget {
+  const Search({Key? key}) : super(key: key);
+
   @override
   _SearchState createState() => _SearchState();
 }
