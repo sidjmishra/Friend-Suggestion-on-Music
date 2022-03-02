@@ -14,22 +14,22 @@ class _CreateAccountState extends State<CreateAccount> {
   final _formKey = GlobalKey<FormState>();
   //SnackBar Display
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  String username;
+  late String username;
 
   submit() {
     final form = _formKey.currentState;
     //Saves every [FormField] that
     // is a descendant of this [Form] aka _formKey.
-    if (form.validate()) {
+    if (form!.validate()) {
       form.save();
       //SnackBar
       SnackBar snackBar = SnackBar(
         content: Text('Welcome $username'),
       );
-      _scaffoldKey.currentState.showSnackBar(snackBar);
+      _scaffoldKey.currentState!.showSnackBar(snackBar);
       //Timer So That Page Doesn't disappear before SnackBar
       Timer(
-        Duration(seconds: 2),
+        const Duration(seconds: 2),
         () {
           //Sends Username back
           Navigator.pop(context, username);
@@ -49,10 +49,10 @@ class _CreateAccountState extends State<CreateAccount> {
       ),
       body: ListView(
         children: <Widget>[
-          Container(
+          SizedBox(
             child: Column(
               children: <Widget>[
-                Padding(
+                const Padding(
                   padding: EdgeInsets.only(top: 25.0),
                   child: Text(
                     'Create A Username',
@@ -60,13 +60,13 @@ class _CreateAccountState extends State<CreateAccount> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Container(
+                  padding: const EdgeInsets.all(16.0),
+                  child: SizedBox(
                     //Form Has  A FormKey So That You Can Refer
                     // To It And The onSaved Value
                     child: Form(
+                        autovalidateMode: AutovalidateMode.always,
                         key: _formKey,
-                        autovalidate: true,
                         child: TextFormField(
                           validator: (val) {
                             //Returns the string without any leading and
@@ -74,7 +74,7 @@ class _CreateAccountState extends State<CreateAccount> {
                             // contains leading or trailing whitespace,
                             // a new string with no leading and no trailing
                             // whitespace is returned:
-                            if (val.trim().length < 3 || val.isEmpty) {
+                            if (val!.trim().length < 3 || val.isEmpty) {
                               return 'Username too short';
                             } else if (val.trim().length > 16) {
                               return 'Username Too Long';
@@ -82,8 +82,8 @@ class _CreateAccountState extends State<CreateAccount> {
                               return null;
                             }
                           },
-                          onSaved: (val) => username = val,
-                          decoration: InputDecoration(
+                          onSaved: (val) => username = val!,
+                          decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Username',
                             labelStyle: TextStyle(fontSize: 15.0),
@@ -101,7 +101,7 @@ class _CreateAccountState extends State<CreateAccount> {
                       color: Colors.blue,
                       borderRadius: BorderRadius.circular(7.0),
                     ),
-                    child: Center(
+                    child: const Center(
                       child: Text(
                         'Submit',
                         style: TextStyle(

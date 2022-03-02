@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 cachedNetworkImage(String mediaUrl) {
@@ -5,7 +6,7 @@ cachedNetworkImage(String mediaUrl) {
     imageUrl: mediaUrl,
     //Cover Entire Space
     fit: BoxFit.cover,
-    placeholder: (context, url) => Padding(
+    placeholder: (context, url) => const Padding(
       child: CircularProgressIndicator(
         backgroundColor: Colors.deepOrange,
       ),

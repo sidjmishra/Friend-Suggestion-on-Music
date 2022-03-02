@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:music_recommend/pages/home.dart';
 
 GoogleSignIn googleSignIn = GoogleSignIn();
-Home home = Home();
+Home home = const Home();
 
 AppBar header(BuildContext context,
     {bool isAppTitle = false,
-    String titleText,
+    required String titleText,
     //Giving It A Value Makes It Optional
     removeBackButton = false,
     removeLogoutButton = true}) {
@@ -27,9 +29,9 @@ AppBar header(BuildContext context,
     backgroundColor: Theme.of(context).primaryColor,
     actions: <Widget>[
       removeLogoutButton
-          ? Text('')
+          ? const Text('')
           : IconButton(
-              icon: Icon(Icons.cancel),
+              icon: const Icon(Icons.cancel),
               tooltip: 'LOGOUT',
               onPressed:
                   //logout,

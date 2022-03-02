@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_comparison, avoid_print
+
 import 'dart:async';
 import 'dart:convert' show json;
 
@@ -22,20 +24,22 @@ void main() {
 }
 
 class SignInDemo extends StatefulWidget {
+  const SignInDemo({Key? key}) : super(key: key);
+
   @override
   State createState() => SignInDemoState();
 }
 
 class SignInDemoState extends State<SignInDemo> {
-  GoogleSignInAccount _currentUser;
-  String _contactText;
+  late GoogleSignInAccount _currentUser;
+  late String _contactText;
 
   @override
   void initState() {
     super.initState();
-    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
+    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount? account) {
       setState(() {
-        _currentUser = account;
+        _currentUser = account!;
       });
       if (_currentUser != null) {
         _handleGetContact();
@@ -49,8 +53,8 @@ class SignInDemoState extends State<SignInDemo> {
       _contactText = "Loading contact info...";
     });
     final http.Response response = await http.get(
-      'https://people.googleapis.com/v1/people/me/connections'
-      '?requestMask.includeField=person.names',
+      Uri.parse(
+          'https://people.googleapis.com/v1/people/me/connections?requestMask.includeField=person.names'),
       headers: await _currentUser.authHeaders,
     );
     if (response.statusCode != 200) {
@@ -62,7 +66,7 @@ class SignInDemoState extends State<SignInDemo> {
       return;
     }
     final Map<String, dynamic> data = json.decode(response.body);
-    final String namedContact = _pickFirstNamedContact(data);
+    final String? namedContact = _pickFirstNamedContact(data);
     setState(() {
       if (namedContact != null) {
         _contactText = "I see you know $namedContact!";
@@ -72,9 +76,9 @@ class SignInDemoState extends State<SignInDemo> {
     });
   }
 
-  String _pickFirstNamedContact(Map<String, dynamic> data) {
+  String? _pickFirstNamedContact(Map<String, dynamic> data) {
     final List<dynamic> connections = data['connections'];
-    final Map<String, dynamic> contact = connections?.firstWhere(
+    final Map<String, dynamic> contact = connections.firstWhere(
       (dynamic contact) => contact['names'] != null,
       orElse: () => null,
     );
@@ -104,21 +108,21 @@ class SignInDemoState extends State<SignInDemo> {
     if (_currentUser != null) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
+        children: [
           ListTile(
             leading: GoogleUserCircleAvatar(
               identity: _currentUser,
             ),
             title: Text(_currentUser.displayName ?? ''),
-            subtitle: Text(_currentUser.email ?? ''),
+            subtitle: Text(_currentUser.email),
           ),
           const Text("Signed in successfully."),
-          Text(_contactText ?? ''),
-          RaisedButton(
+          Text(_contactText),
+          ElevatedButton(
             child: const Text('SIGN OUT'),
             onPressed: _handleSignOut,
           ),
-          RaisedButton(
+          ElevatedButton(
             child: const Text('REFRESH'),
             onPressed: _handleGetContact,
           ),
@@ -129,7 +133,7 @@ class SignInDemoState extends State<SignInDemo> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           const Text("You are not currently signed in."),
-          RaisedButton(
+          ElevatedButton(
             child: const Text('SIGN IN'),
             onPressed: _handleSignIn,
           ),

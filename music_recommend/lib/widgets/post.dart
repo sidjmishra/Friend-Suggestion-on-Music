@@ -1,4 +1,14 @@
+import 'dart:async';
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:music_recommend/models/user.dart';
+import 'package:music_recommend/pages/activity_feed.dart';
+import 'package:music_recommend/pages/comments.dart';
+import 'package:music_recommend/pages/home.dart';
+import 'package:music_recommend/widgets/custom_image.dart';
+import 'package:music_recommend/widgets/progress.dart';
 
 class Post extends StatefulWidget {
   final String postId;
@@ -10,15 +20,16 @@ class Post extends StatefulWidget {
   final dynamic likes;
 
   // #2 All Post Stuff From Snapshot
-  Post({
-    this.postId,
-    this.ownerid,
-    this.username,
-    this.location,
-    this.description,
-    this.mediaUrl,
+  const Post({
+    Key? key,
+    required this.postId,
+    required this.ownerid,
+    required this.username,
+    required this.location,
+    required this.description,
+    required this.mediaUrl,
     this.likes,
-  });
+  }) : super(key: key);
 
   // #1 Document Snapshot Is Made Into Post
   factory Post.fromDocument(DocumentSnapshot doc) {
@@ -49,53 +60,52 @@ class Post extends StatefulWidget {
   }
 
   @override
-  //Passed all the values from the widget to the
-  // _PostState constructor No widget.variable
+  // ignore: no_logic_in_create_state
   _PostState createState() => _PostState(
-        postId: this.postId,
-        ownerid: this.ownerid,
-        username: this.username,
-        location: this.location,
-        description: this.description,
-        mediaUrl: this.mediaUrl,
-        likes: this.likes,
-        //method done here and passed in
-        likeCount: getLikeCount(this.likes),
+        postId: postId,
+        ownerid: ownerid,
+        username: username,
+        location: location,
+        description: description,
+        mediaUrl: mediaUrl,
+        likes: likes,
+        likeCount: getLikeCount(likes),
       );
 }
 
 class _PostState extends State<Post> {
-  final String currentUserId = currentUser?.id;
+  final String currentUserId = currentUser!.id;
   final String postId;
   final String ownerid;
   final String username;
   final String location;
   final String description;
   final String mediaUrl;
-  bool isLiked;
+  bool isLiked = false;
   bool showHeart = false;
   int likeCount;
   Map likes;
 
-  _PostState(
-      {this.postId,
-      this.ownerid,
-      this.username,
-      this.location,
-      this.description,
-      this.mediaUrl,
-      this.likes,
-      this.likeCount});
+  _PostState({
+    required this.postId,
+    required this.ownerid,
+    required this.username,
+    required this.location,
+    required this.description,
+    required this.mediaUrl,
+    required this.likes,
+    required this.likeCount,
+  });
 
   buildPostHeader() {
     return FutureBuilder(
-        future: usersRef.document(ownerid).get(),
+        future: usersRef.doc(ownerid).get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             //Stops Here With Return If No Data
             return circularProgress();
           }
-          User user = User.fromDocument(snapshot.data);
+          User user = User.fromDocument(snapshot.data as DocumentSnapshot);
           bool isPostOwner = currentUserId == ownerid;
           return Padding(
             padding: const EdgeInsets.only(top: 15.0),
@@ -108,7 +118,7 @@ class _PostState extends State<Post> {
                 onTap: () => showProfile(context, profileId: user.id),
                 child: Text(
                   user.username,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
@@ -120,11 +130,11 @@ class _PostState extends State<Post> {
                   ? IconButton(
                       //Passed In Context Since Modal Needs Context
                       onPressed: () => handleDeletePost(context),
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.more_vert,
                       ),
                     )
-                  : Text(''),
+                  : const Text(''),
             ),
           );
         });
@@ -135,21 +145,21 @@ class _PostState extends State<Post> {
         context: parentContext,
         builder: (context) {
           return SimpleDialog(
-            title: Text('Remove The Post?'),
+            title: const Text('Remove The Post?'),
             children: <Widget>[
               SimpleDialogOption(
                 onPressed: () {
                   Navigator.pop(context);
                   deletePost();
                 },
-                child: Text(
+                child: const Text(
                   'Delete',
                   style: TextStyle(color: Colors.red),
                 ),
               ),
               SimpleDialogOption(
                 onPressed: () => Navigator.pop(context),
-                child: Text('Cancel'),
+                child: const Text('Cancel'),
               )
             ],
           );
@@ -159,9 +169,9 @@ class _PostState extends State<Post> {
   deletePost() async {
     //Delete Post
     postsRef
-        .document(ownerid)
+        .doc(ownerid)
         .collection('userPosts')
-        .document(postId)
+        .doc(postId)
 //You Can Call Delete Here Yet You Should Make Sure It Exists First
         .get()
         .then((doc) {
@@ -173,25 +183,23 @@ class _PostState extends State<Post> {
     storageRef.child('post_$postId.jpg').delete();
 //Then Delete All Activity Feed Notifications
     QuerySnapshot activityFeedSnapshot = await activityFeedRef
-        .document(ownerid)
+        .doc(ownerid)
         .collection('feedItems')
         .where('postId', isEqualTo: postId)
-        .getDocuments();
-    activityFeedSnapshot.documents.forEach((doc) {
+        .get();
+    for (var doc in activityFeedSnapshot.docs) {
       if (doc.exists) {
         doc.reference.delete();
       }
-    });
+    }
 //Then Delete All Comments
-    QuerySnapshot commentsSnapshot = await commentsRef
-        .document(postId)
-        .collection('comments')
-        .getDocuments();
-    commentsSnapshot.documents.forEach((doc) {
+    QuerySnapshot commentsSnapshot =
+        await commentsRef.doc(postId).collection('comments').get();
+    for (var doc in commentsSnapshot.docs) {
       if (doc.exists) {
         doc.reference.delete();
       }
-    });
+    }
   }
 
   handleLikePost() {
@@ -200,10 +208,10 @@ class _PostState extends State<Post> {
     //If They Liked It Take Like Away
     if (_isLiked) {
       postsRef
-          .document(ownerid)
+          .doc(ownerid)
           .collection('userPosts')
-          .document(postId)
-          .updateData({'likes.$currentUserId': false});
+          .doc(postId)
+          .update({'likes.$currentUserId': false});
       removeLikeFromActivityFeed();
       setState(() {
         likeCount -= 1;
@@ -213,10 +221,10 @@ class _PostState extends State<Post> {
       //If They Didn't Like It Already Add Like
     } else if (!_isLiked) {
       postsRef
-          .document(ownerid)
+          .doc(ownerid)
           .collection('userPosts')
-          .document(postId)
-          .updateData({'likes.$currentUserId': true});
+          .doc(postId)
+          .update({'likes.$currentUserId': true});
       addLikeToActivityFeed();
       setState(() {
         likeCount += 1;
@@ -224,7 +232,7 @@ class _PostState extends State<Post> {
         likes[currentUserId] = true;
         showHeart = true;
       });
-      Timer(Duration(milliseconds: 500), () {
+      Timer(const Duration(milliseconds: 500), () {
         setState(() {
           showHeart = false;
         });
@@ -239,15 +247,15 @@ class _PostState extends State<Post> {
     //if (isNotPostOwner) {
     activityFeedRef
         //Send Notification To THe Owner Of The Post
-        .document(ownerid)
+        .doc(ownerid)
         .collection('feedItems')
-        .document(postId)
-        .setData({
+        .doc(postId)
+        .set({
       'type': 'like',
       //User Who Liked The Post
-      'username': currentUser.username,
-      'userId': currentUser.id,
-      'userProfileImg': currentUser.photoUrl,
+      'username': currentUser!.username,
+      'userId': currentUser!.id,
+      'userProfileImg': currentUser!.photoUrl,
       'postId': postId,
       'mediaUrl': mediaUrl,
       'timestamp': timestamp,
@@ -258,11 +266,7 @@ class _PostState extends State<Post> {
   removeLikeFromActivityFeed() {
     bool isNotPostOwner = currentUserId != ownerid;
     if (isNotPostOwner) {
-      activityFeedRef
-          .document(ownerid)
-          .collection('feedItems')
-          .document(postId)
-          .get()
+      activityFeedRef.doc(ownerid).collection('feedItems').doc(postId).get()
           //Whatever Comes From Get Is Sent To Then And Named doc
           .then((doc) {
         if (doc.exists) {
@@ -277,7 +281,7 @@ class _PostState extends State<Post> {
       onDoubleTap: handleLikePost,
       child: Stack(
         alignment: Alignment.center,
-        children: <Widget>[
+        children: [
           cachedNetworkImage(mediaUrl),
           showHeart
               ? Icon(
@@ -285,7 +289,7 @@ class _PostState extends State<Post> {
                   size: 100.0,
                   color: Colors.red.withOpacity(0.5),
                 )
-              : Text(''),
+              : const Text(''),
         ],
       ),
     );
@@ -296,8 +300,8 @@ class _PostState extends State<Post> {
       children: <Widget>[
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Padding(
+          children: [
+            const Padding(
               padding: EdgeInsets.only(
                 top: 40.0,
                 left: 20.0,
@@ -312,7 +316,7 @@ class _PostState extends State<Post> {
                 color: Colors.pink,
               ),
             ),
-            Padding(
+            const Padding(
               padding: EdgeInsets.only(
                 top: 40.0,
                 right: 20.0,
@@ -341,7 +345,7 @@ class _PostState extends State<Post> {
               margin: EdgeInsets.only(left: 20.0),
               child: Text(
                 '$likeCount likes',
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
@@ -353,10 +357,10 @@ class _PostState extends State<Post> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
-              margin: EdgeInsets.only(left: 20.0),
+              margin: const EdgeInsets.only(left: 20.0),
               child: Text(
                 '$username ',
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
@@ -386,7 +390,9 @@ class _PostState extends State<Post> {
 }
 
 showComments(BuildContext context,
-    {String postId, String ownerid, String mediaUrl}) {
+    {required String postId,
+    required String ownerid,
+    required String mediaUrl}) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
     return Comments(
       postId: postId,

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:music_recommend/pages/post_screen.dart';
+import 'package:music_recommend/widgets/custom_image.dart';
+import 'package:music_recommend/widgets/post.dart';
 
 class PostTile extends StatelessWidget {
   final Post post;
 
-  PostTile({this.post});
+  const PostTile({Key? key, required this.post}) : super(key: key);
 
   showPost(context) {
     Navigator.push(

@@ -54,7 +54,7 @@ class _HomeState extends State<Home> {
   //FireBaseMessaging Stuff
   // With The Key _scaffoldKey.currentState.showSnackbar();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  late FirebaseMessaging _firebaseMessaging;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   bool isAuth = false;
   //Make Sure To Dispose When Not On The HomePage
   late PageController pageController;
@@ -105,7 +105,6 @@ class _HomeState extends State<Home> {
   configurePushNotifications() {
     //Get User
     final GoogleSignInAccount? user = googleSignIn.currentUser;
-    if (Platform.isIOS) getIOSPermission();
     //Get Notification Token And Associate It With The User Data
     _firebaseMessaging.getToken().then((token) {
       print("Firebase Messaging TOKEN:::: $token\n");
@@ -114,44 +113,21 @@ class _HomeState extends State<Home> {
       usersRef.doc(user!.id).update({"androidNotificationToken": token});
     });
 
-    _firebaseMessaging.configure(
-      //Map Strings As Keys And Dynamic For Its Value
-      // const message = {
-      //            //notification: { title: "Hello" body: body}
-      //            notification: {body},
-      //            token: androidNotificationToken,
-      //            data: {recipient: userId}
-      //        };
-//      //Send A Notification When App Is Off
-//      onLaunch: (Map<String, dynamic> message) async {},
-//      //Send A Message When App Is In The Background
-//      onResume: (Map<String, dynamic> message) async {},
-      //Send A Message While They Are Actively Using The App
-      onMessage: (Map<String, dynamic> message) async {
-        print('onMessage: $message\n');
-        //From message map  data object recipient property
-        final String recipientId = message['data']['recipient'];
-        //From message map notification object body property
-        final String body = message['notification']['body'];
-        if (recipientId == user?.id) {
-          print("Notification Shown");
-          SnackBar snackbar = SnackBar(
-              content: Text(
-            body,
-            overflow: TextOverflow.ellipsis,
-          ));
-          _scaffoldKey.currentState!.showSnackBar(snackbar);
-        }
-        print('NOTIFICATION Not Shown');
-      },
-    );
-  }
-
-  getIOSPermission() {
-    _firebaseMessaging.requestNotificationPermissions(
-        IosNotificationSettings(alert: true, badge: true, sound: true));
-    _firebaseMessaging.onIosSettingsRegistered.listen((settings) {
-      print("Settings Registered: $settings");
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      print('onMessage: $message\n');
+      final String? recipientId = message.senderId;
+      final String? body = message.notification!.body;
+      if (recipientId == user?.id) {
+        print("Notification Shown");
+        SnackBar snackbar = SnackBar(
+            content: Text(
+          body!,
+          overflow: TextOverflow.ellipsis,
+        ));
+        _scaffoldKey.currentState!.showSnackBar(snackbar);
+      }
+      print('NOTIFICATION Not Shown');
     });
   }
 
