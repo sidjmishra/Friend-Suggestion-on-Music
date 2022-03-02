@@ -298,7 +298,8 @@ class _UploadState extends State<Upload>
                   ),
                 ),
               ),
-              onPressed: getUserLocation,
+              onPressed: () {},
+              // onPressed: getUserLocation,
               icon: const Icon(
                 Icons.my_location,
                 color: Colors.white,
@@ -310,24 +311,25 @@ class _UploadState extends State<Upload>
     );
   }
 
-  getUserLocation() async {
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-    List<Placemark> placeMarks = await Geolocator().placemarkFromCoordinates(
-      position.latitude,
-      position.longitude,
-    );
-    Placemark placeMark = placeMarks[0];
-    String completeAddress =
-        '${placeMark.subThoroughfare} ${placeMark.thoroughfare} ${placeMark.subLocality} ${placeMark.locality} ${placeMark.subAdministrativeArea} ${placeMark.administrativeArea} ${placeMark.postalCode} ${placeMark.country}';
-    print(completeAddress);
-    String formattedAddress =
-        '${placeMark.locality}, ${placeMark.administrativeArea}, ${placeMark.country}';
-    locationController.text = formattedAddress;
-  }
+  // getUserLocation() async {
+  //   Position position = await Geolocator.getCurrentPosition(
+  //     desiredAccuracy: LocationAccuracy.high,
+  //   );
+  //   List<Placemark> placeMarks = await Geolocator().placemarkFromCoordinates(
+  //     position.latitude,
+  //     position.longitude,
+  //   );
+  //   Placemark placeMark = placeMarks[0];
+  //   String completeAddress =
+  //       '${placeMark.subThoroughfare} ${placeMark.thoroughfare} ${placeMark.subLocality} ${placeMark.locality} ${placeMark.subAdministrativeArea} ${placeMark.administrativeArea} ${placeMark.postalCode} ${placeMark.country}';
+  //   print(completeAddress);
+  //   String formattedAddress =
+  //       '${placeMark.locality}, ${placeMark.administrativeArea}, ${placeMark.country}';
+  //   locationController.text = formattedAddress;
+  // }
 
   //AutomaticKeepAliveClientMixin Requirement #2 of 3
+  @override
   bool get wantKeepAlive => true;
 
   @override

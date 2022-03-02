@@ -74,7 +74,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
           //DATA latest data received by the asynchronous computation (Snapshot)
           //DOCUMENTS Gets a list of all the documents included in this snapshot
           //Each Document made into ActivityFeedItem and saved to list
-          snapshot.data.documents.forEach((doc) {
+          snapshot.data!.docs.forEach((doc) {
             feedItems.add(ActivityFeedItem.fromDocument(doc));
           });
 

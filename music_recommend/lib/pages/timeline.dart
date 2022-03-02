@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:music_recommend/models/user.dart';
@@ -27,13 +29,13 @@ class _TimelineState extends State<Timeline> {
   }
 
   //Used To Save A List To Use Elsewhere In Program Used With SetState
-  List<String> followingList = [];
+  List<dynamic> followingList = [];
   List<Post> posts = [];
 
   List<dynamic> users = [];
 
   notFollowingMethod() {
-    return StreamBuilder(
+    return StreamBuilder<QuerySnapshot>(
       stream:
           usersRef.orderBy('timestamp', descending: true).limit(30).snapshots(),
       builder: (context, snapshot) {
@@ -42,7 +44,7 @@ class _TimelineState extends State<Timeline> {
         }
         List<UserResult> userResults = [];
         //ForEach Loop Everything in it is done once
-        snapshot.data!.documents.forEach((doc) {
+        snapshot.data!.docs.forEach((doc) {
           //Take snapshot and return 1 User Object
           User user = User.fromDocument(doc);
           //Check if your user profile comes up so You don't add yourself
@@ -106,7 +108,8 @@ class _TimelineState extends State<Timeline> {
     setState(() {
       //Gets Document Id Field Of Each UserFollowing Document Which
       // Is A User Id
-      followingList = snapshot.docs.map((doc) => doc.documentID).toList();
+      followingList =
+          snapshot.docs.map((doc) => doc.get(FieldPath.documentId)).toList();
     });
   }
 
@@ -127,7 +130,7 @@ class _TimelineState extends State<Timeline> {
           StreamBuilder<QuerySnapshot>(
         //initialData: null,
         stream: timelineRef
-            .document(widget.currentUser.id)
+            .doc(widget.currentUser.id)
             .collection('timelinePosts')
             .orderBy('timestamp', descending: true)
             .snapshots(),
@@ -139,7 +142,7 @@ class _TimelineState extends State<Timeline> {
 //            return circularProgress();
 //          }
           List<Post> children = [];
-          snapshot.data.documents.forEach((doc) {
+          snapshot.data!.docs.forEach((doc) {
             children.add(Post.fromDocument(doc));
           });
 
@@ -151,7 +154,7 @@ class _TimelineState extends State<Timeline> {
           //print('children.length ${children.length}');
 
           return Container(
-            child: children.length > 0
+            child: children.isNotEmpty
                 ? ListView(
                     children: children,
                   )

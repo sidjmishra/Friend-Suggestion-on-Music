@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print, unnecessary_null_comparison
 
+import 'dart:html';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -87,14 +89,14 @@ class _SearchState extends State<Search>
   }
 
   buildSearchResults() {
-    return FutureBuilder(
+    return FutureBuilder<QuerySnapshot>(
         future: searchResultsFuture,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return circularProgress();
           }
           List<UserResult> searchResults = [];
-          snapshot.data.documents.forEach((doc) {
+          snapshot.data!.docs.forEach((doc) {
             User user = User.fromDocument(doc);
             UserResult searchResult = UserResult(user);
             print('USER');
