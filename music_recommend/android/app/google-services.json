@@ -7,17 +7,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:604774421863:android:27909a60d5f5c1da358bc2",
+        "mobilesdk_app_id": "1:604774421863:android:0fcde1949699344f358bc2",
         "android_client_info": {
-          "package_name": "com.android.application"
+          "package_name": "com.example.music_recommend"
         }
       },
       "oauth_client": [
         {
-          "client_id": "604774421863-t2u6u2uut7a5djqn8vlv2afmo7es9er8.apps.googleusercontent.com",
+          "client_id": "604774421863-t22ocdlj2fhjbjr886v1lob64buib07o.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.android.application",
+            "package_name": "com.example.music_recommend",
             "certificate_hash": "93255ac3610d185e5c6c6a04f79d77fd74a31852"
           }
         },

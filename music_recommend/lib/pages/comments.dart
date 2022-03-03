@@ -166,7 +166,7 @@ class Comment extends StatelessWidget {
           //Need To Enable Firestore.instance.settings(timestampsInSnapshotsEnabled: true).then()
           subtitle: Text(timeago.format(timestamp.toDate())),
         ),
-        Divider(),
+        const Divider(),
       ],
     );
   }

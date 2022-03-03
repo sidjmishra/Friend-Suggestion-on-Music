@@ -6,8 +6,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:image_picker/image_picker.dart';
+// import 'package:geolocator/geolocator.dart';
+// import 'package:image_picker/image_picker.dart';
 import 'package:music_recommend/models/user.dart';
 import 'package:music_recommend/pages/home.dart';
 import 'package:music_recommend/widgets/progress.dart';
@@ -36,28 +36,27 @@ class _UploadState extends State<Upload>
   bool isUpLoading = false;
   String postId = const Uuid().v4();
 
-  handleTakePhoto(context) async {
-    Navigator.pop(context);
-    File file = (await ImagePicker.pickImage(
-      source: ImageSource.camera,
-      maxHeight: 675,
-      maxWidth: 960,
-    )) as File;
-    setState(() {
-      this.file = file;
-    });
-  }
+  // handleTakePhoto(context) async {
+  //   Navigator.pop(context);
+  //   XFile? xfile = await ImagePicker.pickImage(
+  //     source: ImageSource.camera,
+  //     maxHeight: 675,
+  //     maxWidth: 960,
+  //   );
+  //   setState(() {
+  //     file = xfile as File;
+  //   });
+  // }
 
-  //Can't Do On IOS
-  handleChooseFromGallery(context) async {
-    Navigator.pop(context);
-    File file = (await ImagePicker.pickImage(
-      source: ImageSource.gallery,
-    )) as File;
-    setState(() {
-      this.file = file;
-    });
-  }
+  // handleChooseFromGallery(context) async {
+  //   Navigator.pop(context);
+  //   XFile? xfile = await ImagePicker.pickImage(
+  //     source: ImageSource.gallery,
+  //   );
+  //   setState(() {
+  //     file = xfile as File;
+  //   });
+  // }
 
   selectImage(parentContext) {
     return showDialog(
@@ -68,11 +67,13 @@ class _UploadState extends State<Upload>
           children: [
             SimpleDialogOption(
               child: const Text('Photo with Camera'),
-              onPressed: () => handleTakePhoto(context),
+              onPressed: () {},
+              // onPressed: () => handleTakePhoto(context),
             ),
             SimpleDialogOption(
               child: const Text('Image From Gallery'),
-              onPressed: () => handleChooseFromGallery(context),
+              onPressed: () {},
+              // onPressed: () => handleChooseFromGallery(context),
             ),
             SimpleDialogOption(
               child: const Text(

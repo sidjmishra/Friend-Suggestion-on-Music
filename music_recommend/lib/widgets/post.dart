@@ -342,7 +342,7 @@ class _PostState extends State<Post> {
         Row(
           children: <Widget>[
             Container(
-              margin: EdgeInsets.only(left: 20.0),
+              margin: const EdgeInsets.only(left: 20.0),
               child: Text(
                 '$likeCount likes',
                 style: const TextStyle(

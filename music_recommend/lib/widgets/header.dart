@@ -36,7 +36,7 @@ AppBar header(BuildContext context,
               onPressed:
                   //logout,
                   //(){}
-                  home.logout,
+                  home.logout(context),
             )
     ],
   );

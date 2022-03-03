@@ -16,7 +16,7 @@ GoogleSignIn _googleSignIn = GoogleSignIn(
 
 void main() {
   runApp(
-    MaterialApp(
+    const MaterialApp(
       title: 'Google Sign In',
       home: SignInDemo(),
     ),

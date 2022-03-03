@@ -1,7 +1,5 @@
 // ignore_for_file: avoid_print, unnecessary_null_comparison
 
-import 'dart:html';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +19,7 @@ class Search extends StatefulWidget {
 class _SearchState extends State<Search>
     with AutomaticKeepAliveClientMixin<Search> {
   TextEditingController searchController = TextEditingController();
-  late Future<QuerySnapshot> searchResultsFuture;
+  Future<QuerySnapshot>? searchResultsFuture;
 
   handleSearch(String query) {
     Future<QuerySnapshot> users =

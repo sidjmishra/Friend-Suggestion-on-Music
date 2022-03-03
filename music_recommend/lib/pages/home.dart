@@ -1,7 +1,5 @@
 // ignore_for_file: avoid_print, unnecessary_null_comparison, deprecated_member_use
 
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -44,8 +42,11 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 
   ///Logout
-  logout() {
-    googleSignIn.signOut();
+  logout(BuildContext context) {
+    googleSignIn.signOut().then((value) {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: ((context) => const Home())));
+    });
     print('Logout\n');
   }
 }
@@ -246,7 +247,7 @@ class _HomeState extends State<Home> {
       body: PageView(
         children: <Widget>[
           Timeline(currentUser: currentUser!),
-          ActivityFeed(),
+          const ActivityFeed(),
           Upload(currentUser: currentUser!),
           const Search(),
           //currentUser?.id Null Aware Operator If Null
