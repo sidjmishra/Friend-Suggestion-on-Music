@@ -164,18 +164,14 @@ class _HomePageState extends State<HomePage> {
                     color: kPrimaryColor,
                   ),
                 )
-              : SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const Center(
-                        child: Text("Connected"),
-                      ),
-                      const Divider(),
-                      _connected
-                          ? playerState(context)
-                          : const Text("Spotify not connected"),
-                    ],
-                  ),
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    const Text("Spotify Connected"),
+                    _connected
+                        ? playerState(context)
+                        : const Text("Spotify not connected"),
+                  ],
                 ),
         );
       },
@@ -197,84 +193,37 @@ class _HomePageState extends State<HomePage> {
           );
         }
 
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-                '${track.name} by ${track.artist.name} from the album ${track.album.name}'),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Playback speed: ${playerState.playbackSpeed}'),
-                Text(
-                    'Progress: ${playerState.playbackPosition}ms/${track.duration}ms'),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Paused: ${playerState.isPaused}'),
-                Text('Shuffling: ${playerState.playbackOptions.isShuffling}'),
-              ],
-            ),
-            Text('RepeatMode: ${playerState.playbackOptions.repeatMode}'),
-            Text('Image URI: ${track.imageUri.raw}'),
-            Text('Is episode? ${track.isEpisode}'),
-            Text('Is podcast? ${track.isPodcast}'),
-            _connected
-                ? spotifyImageWidget(track.imageUri)
-                : const Text('Connect to see an image...'),
-            // Column(
-            //   crossAxisAlignment: CrossAxisAlignment.start,
-            //   children: [
-            // const Divider(),
-            // const Text(
-            //   'Set Shuffle and Repeat',
-            //   style: TextStyle(fontSize: 16),
-            // ),
-            // Row(
-            //   children: [
-            //     const Text(
-            //       'Repeat Mode:',
-            //     ),
-            //     DropdownButton<RepeatMode>(
-            //       value: RepeatMode
-            //           .values[playerState.playbackOptions.repeatMode.index],
-            //       items: const [
-            //         DropdownMenuItem(
-            //           value: RepeatMode.off,
-            //           child: Text('off'),
-            //         ),
-            //         DropdownMenuItem(
-            //           value: RepeatMode.track,
-            //           child: Text('track'),
-            //         ),
-            //         DropdownMenuItem(
-            //           value: RepeatMode.context,
-            //           child: Text('context'),
-            //         ),
-            //       ],
-            //       onChanged: (repeatMode) => setRepeatMode(repeatMode!),
-            //     ),
-            //   ],
-            // ),
-            // Row(
-            //   children: [
-            //     const Text('Set shuffle: '),
-            //     Switch.adaptive(
-            //       value: playerState.playbackOptions.isShuffling,
-            //       onChanged: (bool shuffle) => setShuffle(
-            //         shuffle,
-            //       ),
-            //     ),
-            //   ],
-            // ),
-            //   ],
-            // ),
-            Expanded(
-              flex: 1,
-              child: Row(
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _connected
+                  ? spotifyImageWidget(track.imageUri)
+                  : const Text('Connect to see an image...'),
+              const Divider(),
+              Text(
+                '${track.name} - ${track.artist.name}',
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
+              const Divider(),
+              Text(
+                'Artist: ${track.artist.name} - ${track.album.name}',
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
+              const Divider(),
+              Text(
+                'Album: ${track.album.name}',
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
+              // Text(
+              //     'Progress: ${(playerState.playbackPosition ~/ 1000) / 100} / ${(track.duration ~/ 1000) / 100}  '),
+              const Divider(),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   shuffle
@@ -285,9 +234,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           tooltip: "Shuffle On",
                           onPressed: () {
-                            setState(() {
-                              shuffle = true;
-                            });
+                            shuffle = false;
                             setShuffle(shuffle);
                           },
                         )
@@ -295,9 +242,7 @@ class _HomePageState extends State<HomePage> {
                           icon: LineIcon(LineIcons.random),
                           tooltip: "Shuffle Off",
                           onPressed: () {
-                            setState(() {
-                              shuffle = false;
-                            });
+                            shuffle = true;
                             setShuffle(shuffle);
                           },
                         ),
@@ -322,19 +267,20 @@ class _HomePageState extends State<HomePage> {
                       ? IconButton(
                           onPressed: () {
                             repeat = RepeatMode.track;
+                            setRepeatMode(repeat!);
                           },
-                          tooltip: "Repeat Track",
+                          tooltip: "Repeat Once",
                           icon: LineIcon(
                             LineIcons.alternateRedo,
-                            color: kPrimaryColor,
                           ),
                         )
                       : repeat == RepeatMode.track
                           ? IconButton(
                               onPressed: () {
                                 repeat = RepeatMode.context;
+                                setRepeatMode(repeat!);
                               },
-                              tooltip: "Repeat Context",
+                              tooltip: "Repeat Playlist",
                               icon: LineIcon(
                                 LineIcons.alternateRedo,
                                 color: kPrimaryColor,
@@ -343,14 +289,18 @@ class _HomePageState extends State<HomePage> {
                           : IconButton(
                               onPressed: () {
                                 repeat = RepeatMode.off;
+                                setRepeatMode(repeat!);
                               },
                               tooltip: "Repeat Off",
-                              icon: LineIcon(LineIcons.alternateRedo),
+                              icon: LineIcon(
+                                LineIcons.alternateRedo,
+                                color: Colors.purpleAccent,
+                              ),
                             ),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
@@ -360,7 +310,7 @@ class _HomePageState extends State<HomePage> {
     return FutureBuilder(
       future: SpotifySdk.getImage(
         imageUri: image,
-        dimension: ImageDimension.large,
+        dimension: ImageDimension.small,
       ),
       builder: (BuildContext context, AsyncSnapshot<Uint8List?> snapshot) {
         if (snapshot.hasData) {
@@ -368,14 +318,14 @@ class _HomePageState extends State<HomePage> {
         } else if (snapshot.hasError) {
           setStatus(snapshot.error.toString());
           return SizedBox(
-            width: ImageDimension.large.value.toDouble(),
-            height: ImageDimension.large.value.toDouble(),
+            width: ImageDimension.small.value.toDouble(),
+            height: ImageDimension.small.value.toDouble(),
             child: const Center(child: Text('Error getting image')),
           );
         } else {
           return SizedBox(
-            width: ImageDimension.large.value.toDouble(),
-            height: ImageDimension.large.value.toDouble(),
+            width: ImageDimension.small.value.toDouble(),
+            height: ImageDimension.small.value.toDouble(),
             child: const Center(child: Text('Getting image...')),
           );
         }
