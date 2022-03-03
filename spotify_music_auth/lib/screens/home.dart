@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:line_icons/line_icon.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:logger/logger.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/services/auth.dart';
@@ -25,6 +27,8 @@ class _HomePageState extends State<HomePage> {
   String accessToken = "";
   bool _loading = false;
   bool _connected = false;
+  bool shuffle = false;
+  RepeatMode? repeat = RepeatMode.off;
 
   Map<String, dynamic> userData = {};
 
@@ -197,28 +201,6 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                const IconButton(
-                  icon: Icon(Icons.skip_previous),
-                  onPressed: skipPrevious,
-                ),
-                playerState.isPaused
-                    ? const IconButton(
-                        icon: Icon(Icons.play_arrow),
-                        onPressed: resume,
-                      )
-                    : const IconButton(
-                        icon: Icon(Icons.pause),
-                        onPressed: pause,
-                      ),
-                const IconButton(
-                  icon: Icon(Icons.skip_next),
-                  onPressed: skipNext,
-                ),
-              ],
-            ),
             Text(
                 '${track.name} by ${track.artist.name} from the album ${track.album.name}'),
             Row(
@@ -243,52 +225,130 @@ class _HomePageState extends State<HomePage> {
             _connected
                 ? spotifyImageWidget(track.imageUri)
                 : const Text('Connect to see an image...'),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Divider(),
-                const Text(
-                  'Set Shuffle and Repeat',
-                  style: TextStyle(fontSize: 16),
-                ),
-                Row(
-                  children: [
-                    const Text(
-                      'Repeat Mode:',
-                    ),
-                    DropdownButton<RepeatMode>(
-                      value: RepeatMode
-                          .values[playerState.playbackOptions.repeatMode.index],
-                      items: const [
-                        DropdownMenuItem(
-                          value: RepeatMode.off,
-                          child: Text('off'),
+            // Column(
+            //   crossAxisAlignment: CrossAxisAlignment.start,
+            //   children: [
+            // const Divider(),
+            // const Text(
+            //   'Set Shuffle and Repeat',
+            //   style: TextStyle(fontSize: 16),
+            // ),
+            // Row(
+            //   children: [
+            //     const Text(
+            //       'Repeat Mode:',
+            //     ),
+            //     DropdownButton<RepeatMode>(
+            //       value: RepeatMode
+            //           .values[playerState.playbackOptions.repeatMode.index],
+            //       items: const [
+            //         DropdownMenuItem(
+            //           value: RepeatMode.off,
+            //           child: Text('off'),
+            //         ),
+            //         DropdownMenuItem(
+            //           value: RepeatMode.track,
+            //           child: Text('track'),
+            //         ),
+            //         DropdownMenuItem(
+            //           value: RepeatMode.context,
+            //           child: Text('context'),
+            //         ),
+            //       ],
+            //       onChanged: (repeatMode) => setRepeatMode(repeatMode!),
+            //     ),
+            //   ],
+            // ),
+            // Row(
+            //   children: [
+            //     const Text('Set shuffle: '),
+            //     Switch.adaptive(
+            //       value: playerState.playbackOptions.isShuffling,
+            //       onChanged: (bool shuffle) => setShuffle(
+            //         shuffle,
+            //       ),
+            //     ),
+            //   ],
+            // ),
+            //   ],
+            // ),
+            Expanded(
+              flex: 1,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  shuffle
+                      ? IconButton(
+                          icon: LineIcon(
+                            LineIcons.random,
+                            color: kPrimaryColor,
+                          ),
+                          tooltip: "Shuffle On",
+                          onPressed: () {
+                            setState(() {
+                              shuffle = true;
+                            });
+                            setShuffle(shuffle);
+                          },
+                        )
+                      : IconButton(
+                          icon: LineIcon(LineIcons.random),
+                          tooltip: "Shuffle Off",
+                          onPressed: () {
+                            setState(() {
+                              shuffle = false;
+                            });
+                            setShuffle(shuffle);
+                          },
                         ),
-                        DropdownMenuItem(
-                          value: RepeatMode.track,
-                          child: Text('track'),
+                  const IconButton(
+                    icon: Icon(Icons.skip_previous),
+                    onPressed: skipPrevious,
+                  ),
+                  playerState.isPaused
+                      ? const IconButton(
+                          icon: Icon(Icons.play_arrow),
+                          onPressed: resume,
+                        )
+                      : const IconButton(
+                          icon: Icon(Icons.pause),
+                          onPressed: pause,
                         ),
-                        DropdownMenuItem(
-                          value: RepeatMode.context,
-                          child: Text('context'),
-                        ),
-                      ],
-                      onChanged: (repeatMode) => setRepeatMode(repeatMode!),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    const Text('Set shuffle: '),
-                    Switch.adaptive(
-                      value: playerState.playbackOptions.isShuffling,
-                      onChanged: (bool shuffle) => setShuffle(
-                        shuffle,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                  const IconButton(
+                    icon: Icon(Icons.skip_next),
+                    onPressed: skipNext,
+                  ),
+                  repeat == RepeatMode.off
+                      ? IconButton(
+                          onPressed: () {
+                            repeat = RepeatMode.track;
+                          },
+                          tooltip: "Repeat Track",
+                          icon: LineIcon(
+                            LineIcons.alternateRedo,
+                            color: kPrimaryColor,
+                          ),
+                        )
+                      : repeat == RepeatMode.track
+                          ? IconButton(
+                              onPressed: () {
+                                repeat = RepeatMode.context;
+                              },
+                              tooltip: "Repeat Context",
+                              icon: LineIcon(
+                                LineIcons.alternateRedo,
+                                color: kPrimaryColor,
+                              ),
+                            )
+                          : IconButton(
+                              onPressed: () {
+                                repeat = RepeatMode.off;
+                              },
+                              tooltip: "Repeat Off",
+                              icon: LineIcon(LineIcons.alternateRedo),
+                            ),
+                ],
+              ),
             ),
           ],
         );
