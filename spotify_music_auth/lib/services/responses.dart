@@ -24,7 +24,7 @@ class UserProfileResponse {
         options: Options(
           contentType: 'application/json',
           headers: {
-            "authorization": "Bearer $accessToken",
+            "Authorization": "Bearer $accessToken",
           },
         ),
       );
