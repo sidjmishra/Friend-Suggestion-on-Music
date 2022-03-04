@@ -31,6 +31,7 @@ class _HomePageState extends State<HomePage> {
   RepeatMode? repeat = RepeatMode.off;
 
   Map<String, dynamic> userData = {};
+  Map<String, dynamic> topArtists = {};
 
   void setStatus(String code, {String? message}) {
     var text = message ?? '';
@@ -106,13 +107,28 @@ class _HomePageState extends State<HomePage> {
           clientId: '0d13cfc9b5564ffe92fea35cb587c7c2',
           redirectUrl: 'http://localhost:8000/callback',
           scope: 'app-remote-control, '
+              // 'user-read-private, user-read-email, '
+              // 'user-read-playback-position, playlist-modify-public, playlist-modify-private'
+              // 'playlist-read-public, playlist-read-private, user-library-read, '
+              // 'user-library-modify, user-top-read, playlist-read-collaborative, '
+              // 'ugc-image-upload, user-follow-read, user-follow-modify, user-read-playback-state, '
+              // 'user-modify-playback-state, user-read-currently-playing, user-read-recently-played'
               'user-modify-playback-state, '
-              'playlist-read-private, '
+              'playlist-read-private,user-top-read, '
               'playlist-modify-public,user-read-currently-playing');
       setStatus('Got a token: $authenticationToken');
+      Map<String, dynamic> data =
+          await UserProfileResponse(accessToken: authenticationToken)
+              .userData();
+      Map<String, dynamic> artists =
+          await TopArtistResponse(accessToken: authenticationToken).userData();
       setState(() {
         accessToken = authenticationToken;
+        userData = data;
+        topArtists = artists;
       });
+      print(userData['name']);
+      print(topArtists["1"]);
       return authenticationToken;
     } on PlatformException catch (e) {
       setStatus(e.code, message: e.message);
@@ -158,7 +174,7 @@ class _HomePageState extends State<HomePage> {
                   }),
             ],
           ),
-          body: accessToken == ""
+          body: !_connected
               ? const Center(
                   child: CircularProgressIndicator(
                     color: kPrimaryColor,
@@ -167,7 +183,10 @@ class _HomePageState extends State<HomePage> {
               : Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    const Text("Spotify Connected"),
+                    Text(
+                      "Spotify Connected \nName: ${userData['name']} \nSpotify URI: ${userData['uri']}",
+                      textAlign: TextAlign.center,
+                    ),
                     _connected
                         ? playerState(context)
                         : const Text("Spotify not connected"),
