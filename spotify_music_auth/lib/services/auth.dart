@@ -1,5 +1,7 @@
 // ignore_for_file: unnecessary_null_comparison
 
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:spotify_music_auth/models/users.dart';
@@ -75,8 +77,8 @@ class AuthService {
     }
   }
 
-  Future signUpPlay(
-      String name, String email, String password, String username) async {
+  Future signUpPlay(String name, String email, String password, String username,
+      var _imageFile) async {
     try {
       await _firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password)

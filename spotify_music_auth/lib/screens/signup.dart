@@ -44,7 +44,8 @@ class _SignUpState extends State<SignUp> {
     if (_formKey.currentState!.validate()) {
       try {
         await authService
-            .signUpPlay(name.text, email.text, password.text, username.text)
+            .signUpPlay(
+                name.text, email.text, password.text, username.text, _imageFile)
             .then((value) {
           print("Testing" + value);
           return true;
