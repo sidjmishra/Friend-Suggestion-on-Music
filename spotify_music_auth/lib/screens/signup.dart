@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:spotify_music_auth/components/alreadyhaveaccount.dart';
 import 'package:spotify_music_auth/components/roundedbutton.dart';
 import 'package:spotify_music_auth/components/textfieldcontainer.dart';
@@ -24,12 +27,24 @@ class _SignUpState extends State<SignUp> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController name = TextEditingController();
+  TextEditingController username = TextEditingController();
+
+  final picker = ImagePicker();
+  var _imageFile;
+
+  Future pickImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _imageFile = File(pickedFile!.path);
+    });
+  }
 
   Future<bool> signUp() async {
     if (_formKey.currentState!.validate()) {
       try {
         await authService
-            .signUpPlay(name.text, email.text, password.text)
+            .signUpPlay(name.text, email.text, password.text, username.text)
             .then((value) {
           print("Testing" + value);
           return true;
@@ -86,18 +101,54 @@ class _SignUpState extends State<SignUp> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       const Text(
-                        "SIGNUP",
+                        "SIGN UP",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(height: size.height * 0.03),
-                      SvgPicture.asset(
-                        "assets/signup.svg",
-                        height: size.height * 0.35,
+                      SizedBox(height: size.height * 0.02),
+                      GestureDetector(
+                        onTap: pickImage,
+                        child: _imageFile != null
+                            ? CircleAvatar(
+                                backgroundImage: FileImage(_imageFile),
+                                radius: 30.0,
+                              )
+                            : const CircleAvatar(
+                                backgroundImage: AssetImage("assets/user.png"),
+                                radius: 30.0,
+                              ),
                       ),
+                      SizedBox(height: size.height * 0.02),
+                      const Text(
+                        "TAP TO ADD A PROFILE PICTURE",
+                        style: TextStyle(fontWeight: FontWeight.w300),
+                      ),
+                      const Divider(),
+                      // SvgPicture.asset(
+                      //   "assets/signup.svg",
+                      //   height: size.height * 0.25,
+                      // ),
                       TextFieldContainer(
                         child: TextFormField(
                           validator: (val) {
                             return val!.length < 3 ? 'Enter valid name' : null;
+                          },
+                          keyboardType: TextInputType.name,
+                          controller: username,
+                          cursorColor: kPrimaryColor,
+                          decoration: const InputDecoration(
+                            icon: Icon(
+                              Icons.person,
+                              color: kPrimaryColor,
+                            ),
+                            hintText: "Username",
+                            border: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                      TextFieldContainer(
+                        child: TextFormField(
+                          validator: (val) {
+                            return val!.length < 5 ? 'Enter valid name' : null;
                           },
                           keyboardType: TextInputType.name,
                           controller: name,
@@ -168,7 +219,7 @@ class _SignUpState extends State<SignUp> {
                         ),
                       ),
                       RoundedButton(
-                        text: "SIGNUP",
+                        text: "SIGN UP",
                         press: signUp,
                       ),
                       SizedBox(height: size.height * 0.03),

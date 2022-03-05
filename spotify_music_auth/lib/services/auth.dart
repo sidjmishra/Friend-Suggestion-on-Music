@@ -75,16 +75,19 @@ class AuthService {
     }
   }
 
-  Future signUpPlay(String name, String email, String password) async {
+  Future signUpPlay(
+      String name, String email, String password, String username) async {
     try {
       await _firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password)
           .then((userFromDb) async {
         if (user != null) {
           PlayUser newUser = PlayUser(
-              uid: userFromDb.user!.uid,
-              displayName: name,
-              email: userFromDb.user!.email);
+            uid: userFromDb.user!.uid,
+            displayName: name,
+            email: userFromDb.user!.email,
+            username: username,
+          );
 
           await Database().addUserToDatabase(newUser).then((status) {
             return true;

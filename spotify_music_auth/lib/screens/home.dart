@@ -183,10 +183,6 @@ class _HomePageState extends State<HomePage> {
               : Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text(
-                      "Spotify Connected \nName: ${userData['name']} \nSpotify URI: ${userData['uri']}",
-                      textAlign: TextAlign.center,
-                    ),
                     _connected
                         ? playerState(context)
                         : const Text("Spotify not connected"),
