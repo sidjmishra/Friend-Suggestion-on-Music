@@ -41,14 +41,11 @@ class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 
-  ///Logout
-  logout(BuildContext context) {
-    googleSignIn.signOut().then((value) {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: ((context) => const Home())));
-    });
-    print('Logout\n');
-  }
+  // ///Logout
+  // logout() {
+  //   googleSignIn.signOut();
+  //   print('Logout\n');
+  // }
 }
 
 class _HomeState extends State<Home> {
@@ -64,19 +61,14 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    //Widgets Initialized In InitState Must Be disposed
     pageController = PageController();
 
-    ///Detects When User Signed In
-    //account is a return type of googleSignInAccount
     googleSignIn.onCurrentUserChanged.listen((account) {
       handleSignIn(account: account!);
     }, onError: (err) {
       print('Error Signing In: $err');
     });
 
-    ///ReAuthenticate user when app is opened
-    //App Doesn't Keep State
     googleSignIn.signInSilently(suppressErrors: false).then((account) {
       handleSignIn(account: account!);
       print('Signed In Silently\n');
@@ -240,9 +232,6 @@ class _HomeState extends State<Home> {
   ///AuthScreen
   Widget buildAuthScreen() {
     return Scaffold(
-      //Key For Messaging
-      //Scaffold wraps all these pages
-      //Snackbar Will Show Here Only
       key: _scaffoldKey,
       body: PageView(
         children: <Widget>[
@@ -250,11 +239,8 @@ class _HomeState extends State<Home> {
           const ActivityFeed(),
           Upload(currentUser: currentUser!),
           const Search(),
-          //currentUser?.id Null Aware Operator If Null
-          // Don't Pass It
           Profile(profileId: currentUser!.id),
         ],
-        //Controller To switch Between Pages
         controller: pageController,
         onPageChanged: onPageChanged,
         physics: const NeverScrollableScrollPhysics(),
@@ -307,7 +293,7 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Text(
-              'FlutterShare',
+              'Play-Connect',
               style: TextStyle(
                 fontFamily: "Signatra",
                 fontSize: orientation == Orientation.portrait ? 90.0 : 150.0,

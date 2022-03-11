@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:music_recommend/pages/home.dart';
@@ -33,10 +35,13 @@ AppBar header(BuildContext context,
           : IconButton(
               icon: const Icon(Icons.cancel),
               tooltip: 'LOGOUT',
-              onPressed:
-                  //logout,
-                  //(){}
-                  home.logout(context),
+              onPressed: () {
+                googleSignIn.signOut();
+                // googleSignIn.signOut().whenComplete(() =>
+                //     Navigator.pushReplacement(context,
+                //         MaterialPageRoute(builder: (context) => const Home())));
+                print("Log out");
+              },
             )
     ],
   );

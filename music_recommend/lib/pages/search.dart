@@ -87,7 +87,7 @@ class _SearchState extends State<Search>
   }
 
   buildSearchResults() {
-    return FutureBuilder<QuerySnapshot>(
+    return FutureBuilder<QuerySnapshot<Object?>>(
         future: searchResultsFuture,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
