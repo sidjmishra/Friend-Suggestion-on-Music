@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_getters_setters
+
 class UserProfile {
   String? _country;
   String? _displayName;
@@ -94,20 +96,20 @@ class UserProfile {
     _displayName = json['display_name'];
     _email = json['email'];
     _explicitContent = json['explicit_content'] != null
-        ? new ExplicitContent.fromJson(json['explicit_content'])
+        ? ExplicitContent.fromJson(json['explicit_content'])
         : null;
     _externalUrls = json['external_urls'] != null
-        ? new ExternalUrls.fromJson(json['external_urls'])
+        ? ExternalUrls.fromJson(json['external_urls'])
         : null;
     _followers = json['followers'] != null
-        ? new Followers.fromJson(json['followers'])
+        ? Followers.fromJson(json['followers'])
         : null;
     _href = json['href'];
     _id = json['id'];
     if (json['images'] != null) {
       _images = <Images>[];
       json['images'].forEach((v) {
-        _images!.add(new Images.fromJson(v));
+        _images!.add(Images.fromJson(v));
       });
     }
     _product = json['product'];

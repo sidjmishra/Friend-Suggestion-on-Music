@@ -1,12 +1,15 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:spotify_music_auth/actual.dart';
 import 'package:spotify_music_auth/components/alreadyhaveaccount.dart';
 import 'package:spotify_music_auth/components/roundedbutton.dart';
 import 'package:spotify_music_auth/components/textfieldcontainer.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
+import 'package:spotify_music_auth/screens/home.dart';
 import 'package:spotify_music_auth/screens/login.dart';
 import 'package:spotify_music_auth/services/auth.dart';
 
@@ -40,15 +43,17 @@ class _SignUpState extends State<SignUp> {
     });
   }
 
-  Future<bool> signUp() async {
+  Future signUp() async {
     if (_formKey.currentState!.validate()) {
       try {
         await authService
             .signUpPlay(
                 name.text, email.text, password.text, username.text, _imageFile)
             .then((value) {
-          print("Testing" + value);
-          return true;
+          if (value != 'error') {
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const HomePage()));
+          }
         }).catchError((err) {
           setState(() {
             print("Error:" + err);
@@ -60,12 +65,14 @@ class _SignUpState extends State<SignUp> {
           print(e);
           _errorMessage = e.toString();
         });
-        return false;
       }
-
-      return false;
     }
-    return false;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(_errorMessage),
+        duration: const Duration(milliseconds: 300),
+      ),
+    );
   }
 
   @override

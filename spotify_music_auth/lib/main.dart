@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:spotify_music_auth/services/auth.dart';
 
 Future<void> main() async {
-  Firebase.initializeApp();
   WidgetsFlutterBinding.ensureInitialized();
   runApp(Home());
 }

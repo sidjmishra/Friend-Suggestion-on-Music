@@ -6,6 +6,7 @@ import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:logger/logger.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
+import 'package:spotify_music_auth/screens/chats/chatscreen.dart';
 import 'package:spotify_music_auth/services/auth.dart';
 import 'package:spotify_music_auth/services/authenticate.dart';
 import 'package:spotify_music_auth/services/responses.dart';
@@ -29,6 +30,9 @@ class _HomePageState extends State<HomePage> {
   bool _connected = false;
   bool shuffle = false;
   RepeatMode? repeat = RepeatMode.off;
+
+  int _currentPage = 0;
+  final List pages = [];
 
   Map<String, dynamic> userData = {};
   Map<String, dynamic> topArtists = {};
@@ -158,20 +162,38 @@ class _HomePageState extends State<HomePage> {
         }
         return Scaffold(
           appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(
+                Icons.exit_to_app,
+                color: Colors.white,
+              ),
+              tooltip: "Logout",
+              onPressed: () {
+                disconnect();
+                AuthService().signOut().then((value) =>
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const Authenticate())));
+              },
+            ),
             title: const Text('Play-Connect'),
             centerTitle: true,
             backgroundColor: kPrimaryColor,
             actions: [
               IconButton(
-                  icon: const Icon(Icons.exit_to_app),
-                  onPressed: () {
-                    disconnect();
-                    AuthService().signOut().then((value) =>
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const Authenticate())));
-                  }),
+                icon: const Icon(
+                  Icons.chat_bubble,
+                  color: Colors.white,
+                ),
+                tooltip: "Messages",
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ChatScreen()));
+                },
+              ),
             ],
           ),
           body: !_connected

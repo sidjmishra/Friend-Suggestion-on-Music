@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:spotify_music_auth/components/alreadyhaveaccount.dart';
@@ -45,6 +47,12 @@ class _LoginPageState extends State<LoginPage> {
       } catch (e) {
         print(e);
       }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_errorMessage),
+          duration: const Duration(milliseconds: 300),
+        ),
+      );
     }
   }
 
