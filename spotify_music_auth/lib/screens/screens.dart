@@ -3,13 +3,10 @@ import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/screens/activity.dart';
-import 'package:spotify_music_auth/screens/chats/chatscreen.dart';
 import 'package:spotify_music_auth/screens/explore.dart';
 import 'package:spotify_music_auth/screens/home.dart' as home;
 import 'package:spotify_music_auth/screens/player.dart';
 import 'package:spotify_music_auth/screens/profile.dart';
-import 'package:spotify_music_auth/services/auth.dart';
-import 'package:spotify_music_auth/services/authenticate.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
