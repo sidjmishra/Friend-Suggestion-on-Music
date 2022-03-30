@@ -3,7 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:spotify_music_auth/models/users.dart';
-import 'package:spotify_music_auth/screens/home.dart';
+import 'package:spotify_music_auth/screens/screens.dart';
 import 'package:spotify_music_auth/services/authenticate.dart';
 import 'package:spotify_music_auth/services/database.dart';
 

@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
   RepeatMode? repeat = RepeatMode.off;
 
   int _currentPage = 0;
-  final List pages = [];
+  final List<Widget> pages = [];
 
   Map<String, dynamic> userData = {};
   Map<String, dynamic> topArtists = {};
@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage> {
           clientId: '0d13cfc9b5564ffe92fea35cb587c7c2',
           redirectUrl: 'http://localhost:8000/callback',
           scope: 'app-remote-control, '
-              // 'user-read-private, user-read-email, '
+              'user-read-private, user-read-email, '
               // 'user-read-playback-position, playlist-modify-public, playlist-modify-private'
               // 'playlist-read-public, playlist-read-private, user-library-read, '
               // 'user-library-modify, user-top-read, playlist-read-collaborative, '
@@ -145,8 +145,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    getAuthenticationToken();
-    connectToSpotifyRemote();
+    // getAuthenticationToken();
+    // connectToSpotifyRemote();
     super.initState();
   }
 
@@ -169,7 +169,6 @@ class _HomePageState extends State<HomePage> {
               ),
               tooltip: "Logout",
               onPressed: () {
-                disconnect();
                 AuthService().signOut().then((value) =>
                     Navigator.pushReplacement(
                         context,
@@ -196,7 +195,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
-          body: !_connected
+          body: !_connected && accessToken != ""
               ? const Center(
                   child: CircularProgressIndicator(
                     color: kPrimaryColor,
