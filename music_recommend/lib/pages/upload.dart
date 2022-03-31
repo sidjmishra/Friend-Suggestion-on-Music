@@ -6,10 +6,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
 // import 'package:geolocator/geolocator.dart';
 // import 'package:image_picker/image_picker.dart';
 import 'package:music_recommend/models/user.dart';
 import 'package:music_recommend/pages/home.dart';
+import 'package:music_recommend/pages/profile.dart';
 import 'package:music_recommend/widgets/progress.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
@@ -34,29 +36,47 @@ class _UploadState extends State<Upload>
   //Has to be stored in state
   File? file;
   bool isUpLoading = false;
+  var _imageFile;
   String postId = const Uuid().v4();
 
-  // handleTakePhoto(context) async {
-  //   Navigator.pop(context);
-  //   XFile? xfile = await ImagePicker.pickImage(
-  //     source: ImageSource.camera,
-  //     maxHeight: 675,
-  //     maxWidth: 960,
-  //   );
-  //   setState(() {
-  //     file = xfile as File;
-  //   });
-  // }
+  handleTakePhoto(context) async {
+    Navigator.pop(context);
+    // XFile? xfile = await ImagePicker.pickImage(
+    //   source: ImageSource.camera,
 
-  // handleChooseFromGallery(context) async {
-  //   Navigator.pop(context);
-  //   XFile? xfile = await ImagePicker.pickImage(
-  //     source: ImageSource.gallery,
-  //   );
-  //   setState(() {
-  //     file = xfile as File;
-  //   });
-  // }
+    // );
+    // setState(() {
+    //   file = xfile as File;
+    // });
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.camera,
+      maxHeight: 675,
+      maxWidth: 960,
+    );
+
+    setState(() {
+      _imageFile = File(pickedFile!.path);
+    });
+  }
+
+  handleChooseFromGallery(context) async {
+    Navigator.pop(context);
+    // XFile? xfile = await ImagePicker.pickImage(
+    //   source: ImageSource.gallery,
+    // );
+    // setState(() {
+    //   file = xfile as File;
+    // });
+    final picker = ImagePicker();
+    // var _imageFile;
+
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _imageFile = File(pickedFile!.path);
+    });
+  }
 
   selectImage(parentContext) {
     return showDialog(
@@ -67,13 +87,13 @@ class _UploadState extends State<Upload>
           children: [
             SimpleDialogOption(
               child: const Text('Photo with Camera'),
-              onPressed: () {},
-              // onPressed: () => handleTakePhoto(context),
+              // onPressed: () {},
+              onPressed: () => handleTakePhoto(context),
             ),
             SimpleDialogOption(
               child: const Text('Image From Gallery'),
-              onPressed: () {},
-              // onPressed: () => handleChooseFromGallery(context),
+              // onPressed: () {},
+              onPressed: () => handleChooseFromGallery(context),
             ),
             SimpleDialogOption(
               child: const Text(
@@ -131,11 +151,12 @@ class _UploadState extends State<Upload>
     final tempDir = await getTemporaryDirectory();
     final path = tempDir.path;
     //Read Image File We Have In State Putting It In imageFile
-    Im.Image? imageFile = Im.decodeImage(file!.readAsBytesSync());
+    // Im.Image? imageFile = Im.decodeImage(file!.readAsBytesSync());
+    Im.Image? imageFile = Im.decodeImage(_imageFile!.readAsBytesSync());
     final compressesImageFile = File('$path/img_$postId.jpg')
       ..writeAsBytesSync(Im.encodeJpg(imageFile!, quality: 50));
     setState(() {
-      file = compressesImageFile;
+      _imageFile = compressesImageFile;
     });
   }
 
@@ -173,7 +194,7 @@ class _UploadState extends State<Upload>
       isUpLoading = true;
     });
     await compressImage();
-    String mediaUrl = await uploadImage(file);
+    String mediaUrl = await uploadImage(_imageFile);
     createPostInFirestore(
       mediaUrl: mediaUrl,
       location: locationController.text,
@@ -239,7 +260,7 @@ class _UploadState extends State<Upload>
                   decoration: BoxDecoration(
                       image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: FileImage(file!),
+                    image: FileImage(_imageFile),
                   )),
                 ),
               ),
@@ -299,7 +320,13 @@ class _UploadState extends State<Upload>
                   ),
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            Profile(profileId: currentUser!.id)));
+              },
               // onPressed: getUserLocation,
               icon: const Icon(
                 Icons.my_location,
@@ -337,6 +364,6 @@ class _UploadState extends State<Upload>
   Widget build(BuildContext context) {
     //AutomaticKeepAliveClientMixin Requirement #3 of 3
     super.build(context);
-    return file == null ? buildSplashScreen() : buildUploadForm();
+    return _imageFile == null ? buildSplashScreen() : buildUploadForm();
   }
 }

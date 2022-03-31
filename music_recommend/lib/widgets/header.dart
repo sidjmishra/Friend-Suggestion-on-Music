@@ -5,7 +5,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:music_recommend/pages/home.dart';
 
 GoogleSignIn googleSignIn = GoogleSignIn();
-Home home = const Home();
+Home home = Home();
+// bool isAuth = false;
 
 AppBar header(BuildContext context,
     {bool isAppTitle = false,
@@ -36,10 +37,16 @@ AppBar header(BuildContext context,
               icon: const Icon(Icons.cancel),
               tooltip: 'LOGOUT',
               onPressed: () {
-                googleSignIn.signOut();
-                // googleSignIn.signOut().whenComplete(() =>
-                //     Navigator.pushReplacement(context,
-                //         MaterialPageRoute(builder: (context) => const Home())));
+                // home.isAuth = false;
+                // googleSignIn.signOut();
+                googleSignIn
+                    .signOut()
+                    .whenComplete(() => Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Home(
+                                  auth: false,
+                                ))));
                 print("Log out");
               },
             )

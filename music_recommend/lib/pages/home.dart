@@ -36,15 +36,17 @@ final DateTime timestamp = DateTime.now();
 prefix.User? currentUser;
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  bool auth;
+  Home({this.auth = true, Key? key}) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
 
-  // ///Logout
+  ///Logout
   // logout() {
   //   googleSignIn.signOut();
   //   print('Logout\n');
+  //   auth = false;
   // }
 }
 
@@ -62,6 +64,13 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     pageController = PageController();
+    print(isAuth);
+
+    // if (widget.auth == false) {
+    //   setState(() {
+    //     isAuth = false;
+    //   });
+    // }
 
     googleSignIn.onCurrentUserChanged.listen((account) {
       handleSignIn(account: account!);
@@ -302,6 +311,7 @@ class _HomeState extends State<Home> {
             ),
             GestureDetector(
               onTap: () {
+                // widget.auth = true;
                 login();
                 print('Tapped');
               },
@@ -325,6 +335,10 @@ class _HomeState extends State<Home> {
   ///Uses isAuth State to Load Screens
   @override
   Widget build(BuildContext context) {
-    return isAuth ? buildAuthScreen() : buildUnAuthScreen();
+    return !widget.auth
+        ? buildUnAuthScreen()
+        : isAuth
+            ? buildAuthScreen()
+            : buildUnAuthScreen();
   }
 }

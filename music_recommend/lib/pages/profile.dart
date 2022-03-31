@@ -136,6 +136,7 @@ class _ProfileState extends State<Profile> {
 
   Container buildButton({required String text, required Function function}) {
     return Container(
+      width: MediaQuery.of(context).size.width * (0.5),
       padding: const EdgeInsets.only(top: 2.0),
       child: TextButton(
           onPressed: () {
@@ -167,17 +168,174 @@ class _ProfileState extends State<Profile> {
     //Viewing own profile show edit profile
     bool isProfileOwner = currentUserId == widget.profileId;
     if (isProfileOwner) {
-      return buildButton(text: 'Edit Profile', function: editProfile);
+      return Container(
+        width: MediaQuery.of(context).size.width * (0.5),
+        padding: const EdgeInsets.only(top: 2.0),
+        child: TextButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          EditProfile(currentUserId: currentUserId)));
+            },
+            child: Container(
+              width: 250.0,
+              height: 27.0,
+              child: Text(
+                "Edit Profile",
+                style: TextStyle(
+                  color: isFollowing ? Colors.black : Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: isFollowing ? Colors.white : Colors.blue,
+                border: Border.all(
+                  color: isFollowing ? Colors.grey : Colors.blue,
+                ),
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+            )),
+      );
+      // return buildButton(text: 'Edit Profile', function: editProfile);
     } else if (isFollowing) {
-      return buildButton(
-        text: 'Unfollow',
-        function: handleUnfollowUser,
+      return Container(
+        width: MediaQuery.of(context).size.width * (0.5),
+        padding: const EdgeInsets.only(top: 2.0),
+        child: TextButton(
+            onPressed: () {
+              setState(() {
+                isFollowing = false;
+              });
+              //remove follower
+              followersRef
+                  .doc(widget.profileId)
+                  .collection('userFollowers')
+                  .doc(currentUserId)
+                  //doc is a document snapshot
+                  .get()
+                  .then((doc) {
+                if (doc.exists) {
+                  //reference is the reference that produced
+                  // the snapshot doc
+                  doc.reference.delete();
+                }
+              });
+              //remove following
+              followingRef
+                  .doc(currentUserId)
+                  .collection('userFollowing')
+                  .doc(widget.profileId)
+                  .get()
+                  .then((doc) {
+                if (doc.exists) {
+                  //reference is the reference that produced
+                  // the snapshot doc
+                  doc.reference.delete();
+                }
+              });
+              //Delete activity feed item
+              activityFeedRef
+                  .doc(widget.profileId)
+                  .collection('feedItems')
+                  .doc(currentUserId)
+                  .get()
+                  .then((doc) {
+                if (doc.exists) {
+                  //reference is the reference that produced
+                  // the snapshot doc
+                  doc.reference.delete();
+                }
+              });
+            },
+            child: Container(
+              width: 250.0,
+              height: 27.0,
+              child: Text(
+                "Unfollow",
+                style: TextStyle(
+                  color: isFollowing ? Colors.black : Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: isFollowing ? Colors.white : Colors.blue,
+                border: Border.all(
+                  color: isFollowing ? Colors.grey : Colors.blue,
+                ),
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+            )),
       );
+      // buildButton(
+      //   text: 'Unfollow',
+      // function: handleUnfollowUser,
+      // );
     } else if (!isFollowing) {
-      return buildButton(
-        text: 'Follow',
-        function: handleFollowUser,
+      return Container(
+        width: MediaQuery.of(context).size.width * (0.5),
+        padding: const EdgeInsets.only(top: 2.0),
+        child: TextButton(
+            onPressed: () {
+              setState(() {
+                isFollowing = true;
+              });
+              //Make Auth User Follower Of That User
+              // (Update Their Followers Collection)
+              followersRef
+                  .doc(widget.profileId)
+                  .collection('userFollowers')
+                  .doc(currentUserId)
+                  .set({});
+              //Put that user on your following collection (Update
+              //your following collection)
+              followingRef
+                  .doc(currentUserId)
+                  .collection('userFollowing')
+                  .doc(widget.profileId)
+                  .set({});
+              //add activity feed item for tht user to notify about
+              // new follower (us)
+              activityFeedRef
+                  .doc(widget.profileId)
+                  .collection('feedItems')
+                  .doc(currentUserId)
+                  .set({
+                'type': 'follow',
+                'ownerId': widget.profileId,
+                'username': currentUser!.username,
+                'userId': currentUserId,
+                'userProfileImg': currentUser!.photoUrl,
+                'timestamp': timestamp,
+              });
+            },
+            child: Container(
+              width: 250.0,
+              height: 27.0,
+              child: Text(
+                "Follow",
+                style: TextStyle(
+                  color: isFollowing ? Colors.black : Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: isFollowing ? Colors.white : Colors.blue,
+                border: Border.all(
+                  color: isFollowing ? Colors.grey : Colors.blue,
+                ),
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+            )),
       );
+      // buildButton(
+      //   text: 'Follow',
+      //   function: handleFollowUser,
+      // );
     }
   }
 

@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.deepPurple)
             .copyWith(secondary: Colors.teal),
       ),
-      home: const Home(),
+      home: Home(),
     );
   }
 }
