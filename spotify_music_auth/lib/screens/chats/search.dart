@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
+import 'package:spotify_music_auth/screens/chats/chat.dart';
 import 'package:spotify_music_auth/services/database.dart';
 
 class SearchChat extends StatefulWidget {
@@ -44,46 +45,51 @@ class _SearchChatState extends State<SearchChat> {
               return userTile(
                 searchResultSnapshot.docs[index]["username"],
                 searchResultSnapshot.docs[index]["displayName"],
+                searchResultSnapshot.docs[index]["photoUrl"],
               );
             })
         : Container();
   }
 
   sendMessage(String userName) {
-    // List<String> users = [Constants.myName, userName];
+    List<String> users = [Constants.userName, userName];
 
-    // String chatRoomId = getChatRoomId(Constants.myName, userName);
+    String chatRoomId = getChatRoomId(Constants.userName, userName);
 
-    // Map<String, dynamic> chatRoom = {
-    //   "users": users,
-    //   "chatRoomId": chatRoomId,
-    // };
+    Map<String, dynamic> chatRoom = {
+      "users": users,
+      "chatRoomId": chatRoomId,
+    };
 
-    // databaseMethods.addChatRoom(chatRoom, chatRoomId);
+    Database().createChatRoom(chatRoomId, chatRoom);
 
-    // Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (context) => Chat(
-    //               chatRoomId: chatRoomId,
-    //             )));
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Chat(
+                  chatRoomId: chatRoomId,
+                )));
   }
 
-  Widget userTile(String username, String displayName) {
+  Widget userTile(String username, String displayName, String imgUrl) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Row(
         children: [
+          CircleAvatar(
+            backgroundImage: NetworkImage(imgUrl),
+            radius: 20.0,
+          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 username,
-                style: const TextStyle(color: Colors.white, fontSize: 16),
+                style: const TextStyle(color: Colors.black, fontSize: 16),
               ),
               Text(
                 displayName,
-                style: const TextStyle(color: Colors.white, fontSize: 16),
+                style: const TextStyle(color: Colors.black, fontSize: 16),
               )
             ],
           ),
@@ -95,7 +101,8 @@ class _SearchChatState extends State<SearchChat> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                  color: Colors.blue, borderRadius: BorderRadius.circular(24)),
+                  color: kPrimaryColor,
+                  borderRadius: BorderRadius.circular(24)),
               child: const Text(
                 "Message",
                 style: TextStyle(color: Colors.white, fontSize: 16),

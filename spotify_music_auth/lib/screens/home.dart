@@ -6,6 +6,7 @@ import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:logger/logger.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
+import 'package:spotify_music_auth/constants/helper.dart';
 import 'package:spotify_music_auth/screens/chats/chatscreen.dart';
 import 'package:spotify_music_auth/services/auth.dart';
 import 'package:spotify_music_auth/services/authenticate.dart';
@@ -105,7 +106,7 @@ class _HomePageState extends State<HomePage> {
   Future<String> getAuthenticationToken() async {
     try {
       var authenticationToken = await SpotifySdk.getAuthenticationToken(
-          clientId: '0d13cfc9b5564ffe92fea35cb587c7c2',
+          clientId: 'fde1b305d84d4def947ebd284e218e49',
           redirectUrl: 'http://localhost:8000/callback',
           scope: 'app-remote-control, '
               // 'user-read-private, user-read-email, '
@@ -115,7 +116,7 @@ class _HomePageState extends State<HomePage> {
               // 'ugc-image-upload, user-follow-read, user-follow-modify, user-read-playback-state, '
               // 'user-modify-playback-state, user-read-currently-playing, user-read-recently-played'
               'user-modify-playback-state, '
-              'playlist-read-private,user-top-read, '
+              'playlist-read-private, '
               'playlist-modify-public,user-read-currently-playing');
       setStatus('Got a token: $authenticationToken');
       Map<String, dynamic> data =
@@ -140,9 +141,18 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  getUserInfo() async {
+    Constants.uid = HelperFunction.getUserUidSharedPreference().toString();
+    Constants.displayName =
+        HelperFunction.getUserDisplaySharedPreference().toString();
+    Constants.userName =
+        HelperFunction.getUserNameSharedPreference().toString();
+  }
+
   @override
   void initState() {
-    // getAuthenticationToken();
+    getAuthenticationToken();
+    getUserInfo();
     super.initState();
   }
 
@@ -177,10 +187,7 @@ class _HomePageState extends State<HomePage> {
             backgroundColor: kPrimaryColor,
             actions: [
               IconButton(
-                icon: const Icon(
-                  Icons.chat_bubble,
-                  color: Colors.white,
-                ),
+                icon: LineIcon(LineIcons.rocketChat, color: Colors.white),
                 tooltip: "Messages",
                 onPressed: () {
                   Navigator.push(

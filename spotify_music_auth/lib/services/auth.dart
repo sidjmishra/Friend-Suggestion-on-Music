@@ -2,6 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:spotify_music_auth/constants/helper.dart';
 import 'package:spotify_music_auth/models/users.dart';
 import 'package:spotify_music_auth/screens/screens.dart';
 import 'package:spotify_music_auth/services/authenticate.dart';
@@ -42,6 +43,10 @@ class AuthService {
       User? user = (await _firebaseAuth.signInWithEmailAndPassword(
               email: email, password: password))
           .user;
+
+      HelperFunction.saveUserUidSharedPreference(user!.uid);
+      HelperFunction.saveUserLoggedInSharedPreference(true);
+
       return _userFormFirebaseUser(user);
     } on FirebaseAuthException catch (error) {
       print(error.code);
@@ -104,7 +109,12 @@ class AuthService {
           username: username,
         );
 
+        HelperFunction.saveUserNameSharedPreference(username);
+        HelperFunction.saveUserDisplaySharedPreference(name);
+        HelperFunction.saveUserUidSharedPreference(user.uid);
+
         await Database().addUserToDatabase(newUser, _imageFile).then((status) {
+          HelperFunction.saveUserLoggedInSharedPreference(true);
           print("Done");
         }).catchError((err) {
           print(err.toString());
