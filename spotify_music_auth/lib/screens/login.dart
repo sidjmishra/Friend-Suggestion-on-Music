@@ -1,12 +1,17 @@
+// ignore_for_file: avoid_print
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:spotify_music_auth/actual.dart';
 import 'package:spotify_music_auth/components/alreadyhaveaccount.dart';
 import 'package:spotify_music_auth/components/roundedbutton.dart';
 import 'package:spotify_music_auth/components/textfieldcontainer.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
-import 'package:spotify_music_auth/screens/home.dart';
+import 'package:spotify_music_auth/constants/helper.dart';
 import 'package:spotify_music_auth/screens/signup.dart';
 import 'package:spotify_music_auth/services/auth.dart';
+import 'package:spotify_music_auth/services/database.dart';
 
 class LoginPage extends StatefulWidget {
   final Function? toggleView;
@@ -26,6 +31,7 @@ class _LoginPageState extends State<LoginPage> {
 
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  late QuerySnapshot snapshot;
 
   Future signIn() async {
     if (_formKey.currentState!.validate()) {
@@ -33,8 +39,20 @@ class _LoginPageState extends State<LoginPage> {
         await authService.signInPlay(email.text, password.text).then((value) {
           print(value);
           if (value != 'error') {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const HomePage()));
+            Database().getUserByName(email.text).then((value) {
+              snapshot = value;
+              HelperFunction.saveUserNameSharedPreference(
+                  snapshot.docs[0]["username"]);
+              HelperFunction.saveUserDisplaySharedPreference(
+                  snapshot.docs[0]["displayName"]);
+              HelperFunction.saveUserUidSharedPreference(
+                  snapshot.docs[0]["uid"]);
+            });
+
+            HelperFunction.saveUserLoggedInSharedPreference(true);
+
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => const Home()));
           }
         }).catchError((err) {
           print(err);
@@ -45,6 +63,12 @@ class _LoginPageState extends State<LoginPage> {
       } catch (e) {
         print(e);
       }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_errorMessage),
+          duration: const Duration(milliseconds: 300),
+        ),
+      );
     }
   }
 

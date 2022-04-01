@@ -1,8 +1,10 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:spotify_music_auth/actual.dart';
 import 'package:spotify_music_auth/components/alreadyhaveaccount.dart';
 import 'package:spotify_music_auth/components/roundedbutton.dart';
 import 'package:spotify_music_auth/components/textfieldcontainer.dart';
@@ -32,23 +34,28 @@ class _SignUpState extends State<SignUp> {
   final picker = ImagePicker();
   var _imageFile;
 
+  bool isImage = false;
+
   Future pickImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     setState(() {
       _imageFile = File(pickedFile!.path);
+      isImage = true;
     });
   }
 
-  Future<bool> signUp() async {
-    if (_formKey.currentState!.validate()) {
+  Future signUp() async {
+    if (_formKey.currentState!.validate() && isImage) {
       try {
         await authService
-            .signUpPlay(
-                name.text, email.text, password.text, username.text, _imageFile)
+            .signUpPlay(name.text, email.text, password.text, username.text,
+                _imageFile ?? "")
             .then((value) {
-          print("Testing" + value);
-          return true;
+          if (value != 'error') {
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => const Home()));
+          }
         }).catchError((err) {
           setState(() {
             print("Error:" + err);
@@ -60,12 +67,14 @@ class _SignUpState extends State<SignUp> {
           print(e);
           _errorMessage = e.toString();
         });
-        return false;
       }
-
-      return false;
     }
-    return false;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(_errorMessage),
+        duration: const Duration(milliseconds: 300),
+      ),
+    );
   }
 
   @override
@@ -111,23 +120,23 @@ class _SignUpState extends State<SignUp> {
                         child: _imageFile != null
                             ? CircleAvatar(
                                 backgroundImage: FileImage(_imageFile),
-                                radius: 30.0,
+                                radius: 40.0,
                               )
                             : const CircleAvatar(
                                 backgroundImage: AssetImage("assets/user.png"),
-                                radius: 30.0,
+                                radius: 40.0,
                               ),
                       ),
-                      SizedBox(height: size.height * 0.02),
-                      const Text(
-                        "TAP TO ADD A PROFILE PICTURE",
-                        style: TextStyle(fontWeight: FontWeight.w300),
-                      ),
+                      isImage
+                          ? const SizedBox()
+                          : SizedBox(height: size.height * 0.02),
+                      isImage
+                          ? const Text("")
+                          : const Text(
+                              "TAP TO ADD A PROFILE PICTURE",
+                              style: TextStyle(fontWeight: FontWeight.w300),
+                            ),
                       const Divider(),
-                      // SvgPicture.asset(
-                      //   "assets/signup.svg",
-                      //   height: size.height * 0.25,
-                      // ),
                       TextFieldContainer(
                         child: TextFormField(
                           validator: (val) {

@@ -6,6 +6,8 @@ import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:logger/logger.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
+import 'package:spotify_music_auth/constants/helper.dart';
+import 'package:spotify_music_auth/screens/chats/chatscreen.dart';
 import 'package:spotify_music_auth/services/auth.dart';
 import 'package:spotify_music_auth/services/authenticate.dart';
 import 'package:spotify_music_auth/services/responses.dart';
@@ -27,8 +29,8 @@ class _HomePageState extends State<HomePage> {
   String accessToken = "";
   bool _loading = false;
   bool _connected = false;
-  bool shuffle = false;
-  RepeatMode? repeat = RepeatMode.off;
+  // bool shuffle = false;
+  // RepeatMode? repeat = RepeatMode.off;
 
   Map<String, dynamic> userData = {};
   Map<String, dynamic> topArtists = {};
@@ -51,60 +53,60 @@ class _HomePageState extends State<HomePage> {
     ),
   );
 
-  Future<void> disconnect() async {
-    try {
-      setState(() {
-        _loading = true;
-      });
-      var result = await SpotifySdk.disconnect();
-      setStatus(result ? 'disconnect successful' : 'disconnect failed');
-      setState(() {
-        _loading = false;
-      });
-    } on PlatformException catch (e) {
-      setState(() {
-        _loading = false;
-      });
-      setStatus(e.code, message: e.message);
-    } on MissingPluginException {
-      setState(() {
-        _loading = false;
-      });
-      setStatus('not implemented');
-    }
-  }
+  // Future<void> disconnect() async {
+  //   try {
+  //     setState(() {
+  //       _loading = true;
+  //     });
+  //     var result = await SpotifySdk.disconnect();
+  //     setStatus(result ? 'disconnect successful' : 'disconnect failed');
+  //     setState(() {
+  //       _loading = false;
+  //     });
+  //   } on PlatformException catch (e) {
+  //     setState(() {
+  //       _loading = false;
+  //     });
+  //     setStatus(e.code, message: e.message);
+  //   } on MissingPluginException {
+  //     setState(() {
+  //       _loading = false;
+  //     });
+  //     setStatus('not implemented');
+  //   }
+  // }
 
-  Future<void> connectToSpotifyRemote() async {
-    try {
-      setState(() {
-        _loading = true;
-      });
-      var result = await SpotifySdk.connectToSpotifyRemote(
-          clientId: '0d13cfc9b5564ffe92fea35cb587c7c2',
-          redirectUrl: 'http://localhost:8000/callback');
-      setStatus(result
-          ? 'connect to spotify successful'
-          : 'connect to spotify failed');
-      setState(() {
-        _loading = false;
-      });
-    } on PlatformException catch (e) {
-      setState(() {
-        _loading = false;
-      });
-      setStatus(e.code, message: e.message);
-    } on MissingPluginException {
-      setState(() {
-        _loading = false;
-      });
-      setStatus('not implemented');
-    }
-  }
+  // Future<void> connectToSpotifyRemote() async {
+  //   try {
+  //     setState(() {
+  //       _loading = true;
+  //     });
+  //     var result = await SpotifySdk.connectToSpotifyRemote(
+  //         clientId: '0d13cfc9b5564ffe92fea35cb587c7c2',
+  //         redirectUrl: 'http://localhost:8000/callback');
+  //     setStatus(result
+  //         ? 'connect to spotify successful'
+  //         : 'connect to spotify failed');
+  //     setState(() {
+  //       _loading = false;
+  //     });
+  //   } on PlatformException catch (e) {
+  //     setState(() {
+  //       _loading = false;
+  //     });
+  //     setStatus(e.code, message: e.message);
+  //   } on MissingPluginException {
+  //     setState(() {
+  //       _loading = false;
+  //     });
+  //     setStatus('not implemented');
+  //   }
+  // }
 
   Future<String> getAuthenticationToken() async {
     try {
       var authenticationToken = await SpotifySdk.getAuthenticationToken(
-          clientId: '0d13cfc9b5564ffe92fea35cb587c7c2',
+          clientId: 'fde1b305d84d4def947ebd284e218e49',
           redirectUrl: 'http://localhost:8000/callback',
           scope: 'app-remote-control, '
               // 'user-read-private, user-read-email, '
@@ -114,7 +116,7 @@ class _HomePageState extends State<HomePage> {
               // 'ugc-image-upload, user-follow-read, user-follow-modify, user-read-playback-state, '
               // 'user-modify-playback-state, user-read-currently-playing, user-read-recently-played'
               'user-modify-playback-state, '
-              'playlist-read-private,user-top-read, '
+              'playlist-read-private, '
               'playlist-modify-public,user-read-currently-playing');
       setStatus('Got a token: $authenticationToken');
       Map<String, dynamic> data =
@@ -139,10 +141,24 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  getUserInfo() async {
+    HelperFunction.getUserUidSharedPreference().then((value) {
+      Constants.uid = value!;
+    });
+
+    HelperFunction.getUserDisplaySharedPreference().then((value) {
+      Constants.displayName = value!;
+    });
+
+    HelperFunction.getUserNameSharedPreference().then((value) {
+      Constants.userName = value!;
+    });
+  }
+
   @override
   void initState() {
-    getAuthenticationToken();
-    connectToSpotifyRemote();
+    // getAuthenticationToken();
+    getUserInfo();
     super.initState();
   }
 
@@ -158,23 +174,37 @@ class _HomePageState extends State<HomePage> {
         }
         return Scaffold(
           appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(
+                Icons.exit_to_app,
+                color: Colors.white,
+              ),
+              tooltip: "Logout",
+              onPressed: () {
+                AuthService().signOut().then((value) =>
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const Authenticate())));
+              },
+            ),
             title: const Text('Play-Connect'),
             centerTitle: true,
             backgroundColor: kPrimaryColor,
             actions: [
               IconButton(
-                  icon: const Icon(Icons.exit_to_app),
-                  onPressed: () {
-                    disconnect();
-                    AuthService().signOut().then((value) =>
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const Authenticate())));
-                  }),
+                icon: LineIcon(LineIcons.rocketChat, color: Colors.white),
+                tooltip: "Messages",
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ChatScreen()));
+                },
+              ),
             ],
           ),
-          body: !_connected
+          body: accessToken != ""
               ? const Center(
                   child: CircularProgressIndicator(
                     color: kPrimaryColor,
@@ -183,9 +213,7 @@ class _HomePageState extends State<HomePage> {
               : Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _connected
-                        ? playerState(context)
-                        : const Text("Spotify not connected"),
+                    Text("Spotify connected: $accessToken"),
                   ],
                 ),
         );
@@ -193,158 +221,158 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget playerState(BuildContext context) {
-    ImageUri? currentTrackImageUri;
-    return StreamBuilder<PlayerState>(
-      stream: SpotifySdk.subscribePlayerState(),
-      builder: (BuildContext context, AsyncSnapshot<PlayerState> snapshot) {
-        var track = snapshot.data?.track;
-        currentTrackImageUri = track?.imageUri;
-        var playerState = snapshot.data;
+  // Widget playerState(BuildContext context) {
+  //   ImageUri? currentTrackImageUri;
+  //   return StreamBuilder<PlayerState>(
+  //     stream: SpotifySdk.subscribePlayerState(),
+  //     builder: (BuildContext context, AsyncSnapshot<PlayerState> snapshot) {
+  //       var track = snapshot.data?.track;
+  //       currentTrackImageUri = track?.imageUri;
+  //       var playerState = snapshot.data;
 
-        if (playerState == null || track == null) {
-          return Center(
-            child: Container(),
-          );
-        }
+  //       if (playerState == null || track == null) {
+  //         return Center(
+  //           child: Container(),
+  //         );
+  //       }
 
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _connected
-                  ? spotifyImageWidget(track.imageUri)
-                  : const Text('Connect to see an image...'),
-              const Divider(),
-              Text(
-                '${track.name} - ${track.artist.name}',
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
-              const Divider(),
-              Text(
-                'Artist: ${track.artist.name} - ${track.album.name}',
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
-              const Divider(),
-              Text(
-                'Album: ${track.album.name}',
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
-              // Text(
-              //     'Progress: ${(playerState.playbackPosition ~/ 1000) / 100} / ${(track.duration ~/ 1000) / 100}  '),
-              const Divider(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  shuffle
-                      ? IconButton(
-                          icon: LineIcon(
-                            LineIcons.random,
-                            color: kPrimaryColor,
-                          ),
-                          tooltip: "Shuffle On",
-                          onPressed: () {
-                            shuffle = false;
-                            setShuffle(shuffle);
-                          },
-                        )
-                      : IconButton(
-                          icon: LineIcon(LineIcons.random),
-                          tooltip: "Shuffle Off",
-                          onPressed: () {
-                            shuffle = true;
-                            setShuffle(shuffle);
-                          },
-                        ),
-                  const IconButton(
-                    icon: Icon(Icons.skip_previous),
-                    onPressed: skipPrevious,
-                  ),
-                  playerState.isPaused
-                      ? const IconButton(
-                          icon: Icon(Icons.play_arrow),
-                          onPressed: resume,
-                        )
-                      : const IconButton(
-                          icon: Icon(Icons.pause),
-                          onPressed: pause,
-                        ),
-                  const IconButton(
-                    icon: Icon(Icons.skip_next),
-                    onPressed: skipNext,
-                  ),
-                  repeat == RepeatMode.off
-                      ? IconButton(
-                          onPressed: () {
-                            repeat = RepeatMode.track;
-                            setRepeatMode(repeat!);
-                          },
-                          tooltip: "Repeat Once",
-                          icon: LineIcon(
-                            LineIcons.alternateRedo,
-                          ),
-                        )
-                      : repeat == RepeatMode.track
-                          ? IconButton(
-                              onPressed: () {
-                                repeat = RepeatMode.context;
-                                setRepeatMode(repeat!);
-                              },
-                              tooltip: "Repeat Playlist",
-                              icon: LineIcon(
-                                LineIcons.alternateRedo,
-                                color: kPrimaryColor,
-                              ),
-                            )
-                          : IconButton(
-                              onPressed: () {
-                                repeat = RepeatMode.off;
-                                setRepeatMode(repeat!);
-                              },
-                              tooltip: "Repeat Off",
-                              icon: LineIcon(
-                                LineIcons.alternateRedo,
-                                color: Colors.purpleAccent,
-                              ),
-                            ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  //       return Padding(
+  //         padding: const EdgeInsets.symmetric(horizontal: 20.0),
+  //         child: Column(
+  //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //           crossAxisAlignment: CrossAxisAlignment.stretch,
+  //           children: [
+  //             _connected
+  //                 ? spotifyImageWidget(track.imageUri)
+  //                 : const Text('Connect to see an image...'),
+  //             const Divider(),
+  //             Text(
+  //               '${track.name} - ${track.artist.name}',
+  //               textAlign: TextAlign.center,
+  //               style: const TextStyle(fontWeight: FontWeight.w500),
+  //             ),
+  //             const Divider(),
+  //             Text(
+  //               'Artist: ${track.artist.name} - ${track.album.name}',
+  //               textAlign: TextAlign.center,
+  //               style: const TextStyle(fontWeight: FontWeight.w500),
+  //             ),
+  //             const Divider(),
+  //             Text(
+  //               'Album: ${track.album.name}',
+  //               textAlign: TextAlign.center,
+  //               style: const TextStyle(fontWeight: FontWeight.w500),
+  //             ),
+  //             // Text(
+  //             //     'Progress: ${(playerState.playbackPosition ~/ 1000) / 100} / ${(track.duration ~/ 1000) / 100}  '),
+  //             const Divider(),
+  //             Row(
+  //               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //               children: [
+  //                 shuffle
+  //                     ? IconButton(
+  //                         icon: LineIcon(
+  //                           LineIcons.random,
+  //                           color: kPrimaryColor,
+  //                         ),
+  //                         tooltip: "Shuffle On",
+  //                         onPressed: () {
+  //                           shuffle = false;
+  //                           setShuffle(shuffle);
+  //                         },
+  //                       )
+  //                     : IconButton(
+  //                         icon: LineIcon(LineIcons.random),
+  //                         tooltip: "Shuffle Off",
+  //                         onPressed: () {
+  //                           shuffle = true;
+  //                           setShuffle(shuffle);
+  //                         },
+  //                       ),
+  //                 const IconButton(
+  //                   icon: Icon(Icons.skip_previous),
+  //                   onPressed: skipPrevious,
+  //                 ),
+  //                 playerState.isPaused
+  //                     ? const IconButton(
+  //                         icon: Icon(Icons.play_arrow),
+  //                         onPressed: resume,
+  //                       )
+  //                     : const IconButton(
+  //                         icon: Icon(Icons.pause),
+  //                         onPressed: pause,
+  //                       ),
+  //                 const IconButton(
+  //                   icon: Icon(Icons.skip_next),
+  //                   onPressed: skipNext,
+  //                 ),
+  //                 repeat == RepeatMode.off
+  //                     ? IconButton(
+  //                         onPressed: () {
+  //                           repeat = RepeatMode.track;
+  //                           setRepeatMode(repeat!);
+  //                         },
+  //                         tooltip: "Repeat Once",
+  //                         icon: LineIcon(
+  //                           LineIcons.alternateRedo,
+  //                         ),
+  //                       )
+  //                     : repeat == RepeatMode.track
+  //                         ? IconButton(
+  //                             onPressed: () {
+  //                               repeat = RepeatMode.context;
+  //                               setRepeatMode(repeat!);
+  //                             },
+  //                             tooltip: "Repeat Playlist",
+  //                             icon: LineIcon(
+  //                               LineIcons.alternateRedo,
+  //                               color: kPrimaryColor,
+  //                             ),
+  //                           )
+  //                         : IconButton(
+  //                             onPressed: () {
+  //                               repeat = RepeatMode.off;
+  //                               setRepeatMode(repeat!);
+  //                             },
+  //                             tooltip: "Repeat Off",
+  //                             icon: LineIcon(
+  //                               LineIcons.alternateRedo,
+  //                               color: Colors.purpleAccent,
+  //                             ),
+  //                           ),
+  //               ],
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
-  Widget spotifyImageWidget(ImageUri image) {
-    return FutureBuilder(
-      future: SpotifySdk.getImage(
-        imageUri: image,
-        dimension: ImageDimension.small,
-      ),
-      builder: (BuildContext context, AsyncSnapshot<Uint8List?> snapshot) {
-        if (snapshot.hasData) {
-          return Image.memory(snapshot.data!);
-        } else if (snapshot.hasError) {
-          setStatus(snapshot.error.toString());
-          return SizedBox(
-            width: ImageDimension.small.value.toDouble(),
-            height: ImageDimension.small.value.toDouble(),
-            child: const Center(child: Text('Error getting image')),
-          );
-        } else {
-          return SizedBox(
-            width: ImageDimension.small.value.toDouble(),
-            height: ImageDimension.small.value.toDouble(),
-            child: const Center(child: Text('Getting image...')),
-          );
-        }
-      },
-    );
-  }
+  // Widget spotifyImageWidget(ImageUri image) {
+  //   return FutureBuilder(
+  //     future: SpotifySdk.getImage(
+  //       imageUri: image,
+  //       dimension: ImageDimension.small,
+  //     ),
+  //     builder: (BuildContext context, AsyncSnapshot<Uint8List?> snapshot) {
+  //       if (snapshot.hasData) {
+  //         return Image.memory(snapshot.data!);
+  //       } else if (snapshot.hasError) {
+  //         setStatus(snapshot.error.toString());
+  //         return SizedBox(
+  //           width: ImageDimension.small.value.toDouble(),
+  //           height: ImageDimension.small.value.toDouble(),
+  //           child: const Center(child: Text('Error getting image')),
+  //         );
+  //       } else {
+  //         return SizedBox(
+  //           width: ImageDimension.small.value.toDouble(),
+  //           height: ImageDimension.small.value.toDouble(),
+  //           child: const Center(child: Text('Getting image...')),
+  //         );
+  //       }
+  //     },
+  //   );
+  // }
 }
