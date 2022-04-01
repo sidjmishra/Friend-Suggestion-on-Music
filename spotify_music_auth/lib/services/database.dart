@@ -9,7 +9,14 @@ class Database {
   final room = FirebaseFirestore.instance.collection('ChatRoom');
 
   getUserByName(String username) async {
-    return await db.where("username", isEqualTo: username).get();
+    return await db
+        .where(
+          "username",
+          isGreaterThanOrEqualTo: username,
+          isLessThan: username.substring(0, username.length - 1) +
+              String.fromCharCode(username.codeUnitAt(username.length - 1) + 1),
+        )
+        .get();
   }
 
   createChatRoom(String chatRoomId, Map<String, dynamic> chatRoomMap) async {
@@ -20,6 +27,20 @@ class Database {
 
   getUserByEmail(String email) async {
     return await db.where("email", isEqualTo: email).get();
+  }
+
+  addConversation(String chatRoomId, Map<String, dynamic> chatMap) async {
+    await room
+        .doc(chatRoomId)
+        .collection("chats")
+        .add(chatMap)
+        .catchError((error) {
+      print(error.toString());
+    });
+  }
+
+  Future<dynamic> getConversation(String chatRoomId) async {
+    return room.doc(chatRoomId).collection("chats").get();
   }
 
   Future<bool> addUserToDatabase(PlayUser user, var _imageFile) async {

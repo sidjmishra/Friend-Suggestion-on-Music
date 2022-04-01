@@ -68,6 +68,7 @@ class _SearchChatState extends State<SearchChat> {
         MaterialPageRoute(
             builder: (context) => Chat(
                   chatRoomId: chatRoomId,
+                  chatName: users[1],
                 )));
   }
 
@@ -92,9 +93,6 @@ class _SearchChatState extends State<SearchChat> {
                 displayName,
                 style: const TextStyle(color: Colors.black, fontSize: 16),
               ),
-              Text(Constants.displayName),
-              Text(Constants.uid),
-              Text(Constants.userName),
             ],
           ),
           const Spacer(),
@@ -153,9 +151,6 @@ class _SearchChatState extends State<SearchChat> {
                               ),
                               child: TextField(
                                 onSubmitted: (value) {
-                                  // Database().getUserByName(value).then((val) {
-                                  //   print(val.toString());
-                                  // });
                                   initiateSearch();
                                 },
                                 controller: searchEditingController,

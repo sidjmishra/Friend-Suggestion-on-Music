@@ -8,3 +8,9 @@ class Constants {
   static String userName = "";
   static String displayName = "";
 }
+
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
+  }
+}
