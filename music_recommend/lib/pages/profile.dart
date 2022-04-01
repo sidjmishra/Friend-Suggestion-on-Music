@@ -310,6 +310,9 @@ class _ProfileState extends State<Profile> {
                 'userId': currentUserId,
                 'userProfileImg': currentUser!.photoUrl,
                 'timestamp': timestamp,
+                'commentData': '',
+                'postId': '',
+                'mediaUrl': '',
               });
             },
             child: Container(
@@ -416,6 +419,9 @@ class _ProfileState extends State<Profile> {
       'userId': currentUserId,
       'userProfileImg': currentUser!.photoUrl,
       'timestamp': timestamp,
+      'commentData': '',
+      'postId': '',
+      'mediaUrl': '',
     });
   }
 

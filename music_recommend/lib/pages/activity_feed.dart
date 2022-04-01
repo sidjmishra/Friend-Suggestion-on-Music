@@ -57,26 +57,29 @@ class _ActivityFeedState extends State<ActivityFeed> {
     return Scaffold(
       backgroundColor: Colors.black12,
       appBar: header(context, titleText: 'Activity Feed'),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: activityFeedRef
+      body: FutureBuilder<QuerySnapshot<Object?>>(
+        future: activityFeedRef
             .doc(currentUser!.id)
             .collection('feedItems')
             .orderBy('timestamp', descending: true)
             .limit(20)
-            .snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            .get(),
+        builder: (BuildContext context, snapshot) {
           if (!snapshot.hasData) {
             return circularProgress();
           }
           //You Will Use ActivityFeedItem.fromDocument So You Need A
           // List Of ActivityFeedItem
-          List<ActivityFeedItem> feedItems = [];
+          List<Widget> feedItems = [];
           //DATA latest data received by the asynchronous computation (Snapshot)
           //DOCUMENTS Gets a list of all the documents included in this snapshot
           //Each Document made into ActivityFeedItem and saved to list
-          snapshot.data!.docs.forEach((doc) {
-            feedItems.add(ActivityFeedItem.fromDocument(doc));
-          });
+          print(snapshot.data!.docs.length);
+          for (int i = 0; i < snapshot.data!.docs.length; i++) {
+            feedItems
+                .add(ActivityFeedItem.fromDocument(snapshot.data!.docs[i]));
+          }
+          // snapshot.data!.docs.forEach((doc) {});
 
           return Container(
             child: feedItems.isNotEmpty

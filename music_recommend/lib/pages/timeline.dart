@@ -55,6 +55,7 @@ class _TimelineState extends State<Timeline> {
           } else if (isFollowingUser) {
             return;
           } else {
+            // list of not following users
             UserResult userResult = UserResult(user);
             userResults.add(userResult);
           }

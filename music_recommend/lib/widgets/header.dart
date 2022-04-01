@@ -20,7 +20,7 @@ AppBar header(BuildContext context,
     // return false and remove it
     automaticallyImplyLeading: removeBackButton ? false : true,
     title: Text(
-      isAppTitle ? "FlutterShare" : titleText,
+      isAppTitle ? "Music Connect" : titleText,
       style: TextStyle(
         color: Colors.white,
         fontFamily: isAppTitle ? 'Signatra' : '',

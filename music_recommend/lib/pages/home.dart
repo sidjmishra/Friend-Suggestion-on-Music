@@ -64,29 +64,32 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     pageController = PageController();
+    // widget.auth = true;
+
     print(isAuth);
 
-    // if (widget.auth == false) {
-    //   setState(() {
-    //     isAuth = false;
-    //   });
-    // }
-
     googleSignIn.onCurrentUserChanged.listen((account) {
+      // print(account);
       handleSignIn(account: account!);
     }, onError: (err) {
       print('Error Signing In: $err');
     });
 
-    googleSignIn.signInSilently(suppressErrors: false).then((account) {
-      handleSignIn(account: account!);
-      print('Signed In Silently\n');
-    }).catchError((err) {
-      print('Error Signing In: $err');
-    });
+    if (widget.auth == true) {
+      // setState(() {
+      //   isAuth = false;
+      // });
+      googleSignIn.signInSilently(suppressErrors: false).then((account) {
+        handleSignIn(account: account!);
+        print('Signed In Silently\n');
+      }).catchError((err) {
+        print('Error Signing In: $err');
+      });
+    }
   }
 
   handleSignIn({required GoogleSignInAccount account}) async {
+    // print(account);
     if (account != null) {
       //Await has to be used if you call an ASYNC FUNCTION
       await createUserInFirestore();
@@ -311,7 +314,7 @@ class _HomeState extends State<Home> {
             ),
             GestureDetector(
               onTap: () {
-                // widget.auth = true;
+                widget.auth = true;
                 login();
                 print('Tapped');
               },

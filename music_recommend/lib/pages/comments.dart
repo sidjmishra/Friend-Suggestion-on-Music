@@ -53,10 +53,10 @@ class CommentsState extends State<Comments> {
           }
 
           List<Comment> comments = [];
-          snapshot.data.documents.forEach((doc) {
+          snapshot.data.docs.forEach((doc) {
             comments.add(Comment.fromDocument(doc));
           });
-          int count = snapshot.data.documents.length;
+          int count = snapshot.data.docs.length;
           print('There are $count posts');
 
 //          final List<Text> comments = snapshot.data.documents

@@ -84,6 +84,7 @@ class _PostState extends State<Post> {
   bool isLiked = false;
   bool showHeart = false;
   int likeCount;
+  int commentCount = 0;
   Map likes;
 
   _PostState({
@@ -95,7 +96,18 @@ class _PostState extends State<Post> {
     required this.mediaUrl,
     required this.likes,
     required this.likeCount,
+    // required this.commentCount,
   });
+
+  // comment count
+  getCommentCount() async {
+    QuerySnapshot snapshot =
+        await commentsRef.doc(postId).collection('comments').get();
+    setState(() {
+      commentCount = snapshot.docs.length;
+    });
+    // return commentCount;
+  }
 
   buildPostHeader() {
     return FutureBuilder(
@@ -259,6 +271,7 @@ class _PostState extends State<Post> {
       'postId': postId,
       'mediaUrl': mediaUrl,
       'timestamp': timestamp,
+      'commentData': '',
     });
     // }
   }
@@ -344,7 +357,7 @@ class _PostState extends State<Post> {
             Container(
               margin: const EdgeInsets.only(left: 20.0),
               child: Text(
-                '$likeCount likes',
+                '$likeCount likes  $commentCount comments',
                 style: const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
@@ -378,6 +391,7 @@ class _PostState extends State<Post> {
   @override
   Widget build(BuildContext context) {
     isLiked = (likes[currentUserId] == true);
+    getCommentCount();
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
