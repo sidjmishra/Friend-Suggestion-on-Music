@@ -4,22 +4,22 @@ import 'package:line_icons/line_icons.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/screens/activity.dart';
 import 'package:spotify_music_auth/screens/explore.dart';
-import 'package:spotify_music_auth/screens/home.dart' as home;
+import 'package:spotify_music_auth/screens/home.dart';
 import 'package:spotify_music_auth/screens/player.dart';
 import 'package:spotify_music_auth/screens/profile.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class Home extends StatefulWidget {
+  const Home({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<Home> createState() => _HomeState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomeState extends State<Home> {
   int _currentPage = 0;
 
   final List<Widget> pages = [
-    const home.HomePage(),
+    const HomePage(),
     const Explore(),
     const Player(),
     const Activity(),

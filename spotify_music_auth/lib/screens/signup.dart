@@ -9,7 +9,6 @@ import 'package:spotify_music_auth/components/alreadyhaveaccount.dart';
 import 'package:spotify_music_auth/components/roundedbutton.dart';
 import 'package:spotify_music_auth/components/textfieldcontainer.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
-import 'package:spotify_music_auth/screens/home.dart';
 import 'package:spotify_music_auth/screens/login.dart';
 import 'package:spotify_music_auth/services/auth.dart';
 
@@ -35,24 +34,27 @@ class _SignUpState extends State<SignUp> {
   final picker = ImagePicker();
   var _imageFile;
 
+  bool isImage = false;
+
   Future pickImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     setState(() {
       _imageFile = File(pickedFile!.path);
+      isImage = true;
     });
   }
 
   Future signUp() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() && isImage) {
       try {
         await authService
-            .signUpPlay(
-                name.text, email.text, password.text, username.text, _imageFile)
+            .signUpPlay(name.text, email.text, password.text, username.text,
+                _imageFile ?? "")
             .then((value) {
           if (value != 'error') {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const HomePage()));
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => const Home()));
           }
         }).catchError((err) {
           setState(() {
@@ -118,23 +120,23 @@ class _SignUpState extends State<SignUp> {
                         child: _imageFile != null
                             ? CircleAvatar(
                                 backgroundImage: FileImage(_imageFile),
-                                radius: 30.0,
+                                radius: 40.0,
                               )
                             : const CircleAvatar(
                                 backgroundImage: AssetImage("assets/user.png"),
-                                radius: 30.0,
+                                radius: 40.0,
                               ),
                       ),
-                      SizedBox(height: size.height * 0.02),
-                      const Text(
-                        "TAP TO ADD A PROFILE PICTURE",
-                        style: TextStyle(fontWeight: FontWeight.w300),
-                      ),
+                      isImage
+                          ? const SizedBox()
+                          : SizedBox(height: size.height * 0.02),
+                      isImage
+                          ? const Text("")
+                          : const Text(
+                              "TAP TO ADD A PROFILE PICTURE",
+                              style: TextStyle(fontWeight: FontWeight.w300),
+                            ),
                       const Divider(),
-                      // SvgPicture.asset(
-                      //   "assets/signup.svg",
-                      //   height: size.height * 0.25,
-                      // ),
                       TextFieldContainer(
                         child: TextFormField(
                           validator: (val) {

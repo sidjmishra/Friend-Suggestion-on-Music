@@ -28,7 +28,7 @@ class AuthService {
           if (snapshot.connectionState == ConnectionState.active &&
               snapshot.hasData &&
               snapshot.data!.uid != null) {
-            return const HomePage();
+            return const Home();
           } else if (!snapshot.hasData) {
             return const Authenticate();
           }

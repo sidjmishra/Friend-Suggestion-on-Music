@@ -142,16 +142,22 @@ class _HomePageState extends State<HomePage> {
   }
 
   getUserInfo() async {
-    Constants.uid = HelperFunction.getUserUidSharedPreference().toString();
-    Constants.displayName =
-        HelperFunction.getUserDisplaySharedPreference().toString();
-    Constants.userName =
-        HelperFunction.getUserNameSharedPreference().toString();
+    HelperFunction.getUserUidSharedPreference().then((value) {
+      Constants.uid = value!;
+    });
+
+    HelperFunction.getUserDisplaySharedPreference().then((value) {
+      Constants.displayName = value!;
+    });
+
+    HelperFunction.getUserNameSharedPreference().then((value) {
+      Constants.userName = value!;
+    });
   }
 
   @override
   void initState() {
-    getAuthenticationToken();
+    // getAuthenticationToken();
     getUserInfo();
     super.initState();
   }

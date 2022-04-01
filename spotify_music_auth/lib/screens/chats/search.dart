@@ -80,6 +80,7 @@ class _SearchChatState extends State<SearchChat> {
             backgroundImage: NetworkImage(imgUrl),
             radius: 20.0,
           ),
+          const SizedBox(width: 10.0),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -90,7 +91,10 @@ class _SearchChatState extends State<SearchChat> {
               Text(
                 displayName,
                 style: const TextStyle(color: Colors.black, fontSize: 16),
-              )
+              ),
+              Text(Constants.displayName),
+              Text(Constants.uid),
+              Text(Constants.userName),
             ],
           ),
           const Spacer(),
