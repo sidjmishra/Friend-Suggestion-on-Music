@@ -5,7 +5,7 @@ import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/constants/helper.dart';
-import 'package:spotify_music_auth/screens/activity.dart';
+import 'package:spotify_music_auth/screens/activity/activity.dart';
 import 'package:spotify_music_auth/screens/upload.dart';
 import 'package:spotify_music_auth/screens/home.dart';
 import 'package:spotify_music_auth/screens/player.dart';

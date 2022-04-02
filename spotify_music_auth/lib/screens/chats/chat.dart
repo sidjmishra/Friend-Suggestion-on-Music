@@ -16,40 +16,7 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
-  // Stream<QuerySnapshot>? chats;
   TextEditingController messages = TextEditingController();
-
-  Widget chatList(AsyncSnapshot snapshot) {
-    return ListView.builder(
-      itemCount: snapshot.data.docs.length,
-      itemBuilder: (conext, index) {
-        // return Text(snapshot.data.docs[index]["message"].toString());
-        return MessageTile(
-            message: snapshot.data.docs[index]["message"],
-            sendByMe:
-                Constants.userName == snapshot.data.docs[index]["sendBy"]);
-      },
-    );
-  }
-
-  // Widget chatMessages() {
-  // return StreamBuilder<QuerySnapshot>(
-  //   stream: chats,
-  //   builder: (context, snapshot) {
-  //     return snapshot.hasData
-  //         ? ListView.builder(
-  //             itemCount: snapshot.data!.docs.length,
-  //             itemBuilder: (context, index) {
-  //               return MessageTile(
-  //                 message: snapshot.data!.docs[index]["message"],
-  //                 sendByMe: Constants.userName ==
-  //                     snapshot.data!.docs[index]["sendBy"],
-  //               );
-  //             })
-  //         : Container();
-  //   },
-  // );
-  // }
 
   addMessage() {
     if (messages.text.isNotEmpty) {
@@ -75,9 +42,6 @@ class _ChatState extends State<Chat> {
 
   @override
   void initState() {
-    // Database().getConversation(widget.chatRoomId).then((value) {
-    //   chats = value;
-    // });
     super.initState();
   }
 

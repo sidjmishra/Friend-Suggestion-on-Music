@@ -2,11 +2,13 @@
 
 import 'dart:typed_data';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:logger/logger.dart';
+import 'package:spotify_music_auth/components/post.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/constants/helper.dart';
 import 'package:spotify_music_auth/screens/chats/chatscreen.dart';
@@ -36,6 +38,8 @@ class _HomePageState extends State<HomePage> {
 
   Map<String, dynamic> userData = {};
   Map<String, dynamic> topArtists = {};
+
+  List<Post> posts = [];
 
   void setStatus(String code, {String? message}) {
     var text = message ?? '';
@@ -191,38 +195,60 @@ class _HomePageState extends State<HomePage> {
           _connected = data.connected;
         }
         return Scaffold(
-          appBar: AppBar(
-            title: const Text('Play-Connect'),
-            backgroundColor: kPrimaryColor,
-            actions: [
-              IconButton(
-                icon: LineIcon(LineIcons.rocketChat, color: Colors.white),
-                tooltip: "Messages",
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ChatScreen()));
-                },
-              ),
-            ],
-          ),
-          body: accessToken != ""
-              ? const Center(
-                  child: CircularProgressIndicator(
-                    color: kPrimaryColor,
-                  ),
-                )
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text(
-                        "Spotify connected: $accessToken ${Constants.userName}"),
-                  ],
+            appBar: AppBar(
+              title: const Text('Play-Connect'),
+              backgroundColor: kPrimaryColor,
+              actions: [
+                IconButton(
+                  icon: LineIcon(LineIcons.rocketChat, color: Colors.white),
+                  tooltip: "Messages",
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ChatScreen()));
+                  },
                 ),
-        );
+              ],
+            ),
+            body: accessToken != ""
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: kPrimaryColor,
+                    ),
+                  )
+                : postList()
+            // Column(
+            //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //     children: [
+            //       Text(
+            //           "Spotify connected: $accessToken ${Constants.userName}"),
+            //     ],
+            //   ),
+            );
       },
     );
+  }
+
+  Widget postList() {
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection("Posts")
+            .orderBy("timeStamp", descending: true)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(
+              child: Text("No Posts Yet!"),
+            );
+          }
+
+          posts =
+              snapshot.data!.docs.map((doc) => Post.fromDocument(doc)).toList();
+          return ListView(
+            children: posts,
+          );
+        });
   }
 
   // Widget playerState(BuildContext context) {

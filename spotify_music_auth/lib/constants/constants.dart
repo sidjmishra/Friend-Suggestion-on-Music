@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spotify_music_auth/components/comments.dart';
 import 'package:spotify_music_auth/screens/profile/editprofile.dart';
 import 'package:spotify_music_auth/screens/profile/profile.dart';
 
@@ -34,4 +35,19 @@ editProfile(BuildContext context, {required String currentUserId}) {
       context,
       MaterialPageRoute(
           builder: (context) => EditProfile(currentUserId: currentUserId)));
+}
+
+showComments(
+  BuildContext context, {
+  required String postId,
+  required String ownerid,
+  required String mediaUrl,
+}) {
+  Navigator.push(context, MaterialPageRoute(builder: (context) {
+    return Comments(
+      postId: postId,
+      postOwnerId: ownerid,
+      postMediaUrl: mediaUrl,
+    );
+  }));
 }

@@ -555,6 +555,11 @@ class _ProfileState extends State<Profile> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -562,16 +567,20 @@ class _ProfileState extends State<Profile> {
         title: const Text('Play-Connect'),
         backgroundColor: kPrimaryColor,
         actions: [
-          IconButton(
-            icon: LineIcon(LineIcons.alternateSignOut, color: Colors.white),
-            tooltip: "Logout",
-            onPressed: () {
-              AuthService().signOut().then((value) => Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const Authenticate())));
-            },
-          ),
+          widget.profileId == Constants.uid
+              ? IconButton(
+                  icon:
+                      LineIcon(LineIcons.alternateSignOut, color: Colors.white),
+                  tooltip: "Logout",
+                  onPressed: () {
+                    AuthService().signOut().then((value) =>
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const Authenticate())));
+                  },
+                )
+              : Container(),
         ],
       ),
       body: ListView(

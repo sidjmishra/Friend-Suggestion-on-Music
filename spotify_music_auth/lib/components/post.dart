@@ -5,7 +5,6 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:spotify_music_auth/components/comments.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/models/users.dart';
 import 'package:spotify_music_auth/services/database.dart';
@@ -99,7 +98,7 @@ class _PostState extends State<Post> {
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(
-              child: CircularProgressIndicator(),
+              child: Text(""),
             );
           }
           PlayUser user =
@@ -115,11 +114,12 @@ class _PostState extends State<Post> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     CircleAvatar(
+                      radius: 20.0,
                       backgroundImage:
                           CachedNetworkImageProvider(Constants.photoUrl),
                       backgroundColor: Colors.grey,
                     ),
-                    const SizedBox(width: 20.0),
+                    const SizedBox(width: 10.0),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -135,10 +135,12 @@ class _PostState extends State<Post> {
                             ),
                           ),
                         ),
-                        Text(
-                          location,
-                          style: const TextStyle(fontSize: 12.0),
-                        ),
+                        location == ""
+                            ? Container()
+                            : Text(
+                                location,
+                                style: const TextStyle(fontSize: 12.0),
+                              ),
                       ],
                     ),
                   ],
@@ -232,6 +234,14 @@ class _PostState extends State<Post> {
         });
       });
     }
+  }
+
+  commentCounts() async {
+    Database().getCommentCount(postId).then((value) {
+      setState(() {
+        commentCount = value;
+      });
+    });
   }
 
   buildPostImage() {
@@ -340,9 +350,14 @@ class _PostState extends State<Post> {
   }
 
   @override
+  void initState() {
+    commentCounts();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     isLiked = (likes[currentUserId] == true);
-    Database().getCommentCount(postId);
     return Padding(
       padding: const EdgeInsets.only(bottom: 10.0),
       child: Column(
@@ -350,23 +365,9 @@ class _PostState extends State<Post> {
           buildPostHeader(),
           buildPostImage(),
           buildPostFooter(),
+          const Divider(),
         ],
       ),
     );
   }
-}
-
-showComments(
-  BuildContext context, {
-  required String postId,
-  required String ownerid,
-  required String mediaUrl,
-}) {
-  Navigator.push(context, MaterialPageRoute(builder: (context) {
-    return Comments(
-      postId: postId,
-      postOwnerId: ownerid,
-      postMediaUrl: mediaUrl,
-    );
-  }));
 }
