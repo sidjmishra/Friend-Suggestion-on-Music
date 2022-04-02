@@ -200,13 +200,7 @@ class Database {
   removeLikeFromActivityFeed(String currentUserId, String uid, String postId) {
     bool isNotPostOwner = currentUserId != uid;
     if (isNotPostOwner) {
-      FirebaseFirestore.instance
-          .collection('Activity Feed')
-          .doc(uid)
-          .collection('feedItems')
-          .doc(postId)
-          .get()
-          .then((doc) {
+      feed.doc(uid).collection('feedItems').doc(postId).get().then((doc) {
         if (doc.exists) {
           doc.reference.delete();
         }
