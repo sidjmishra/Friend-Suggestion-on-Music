@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:spotify_music_auth/components/post.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/services/auth.dart';
 import 'package:spotify_music_auth/services/authenticate.dart';
@@ -23,7 +24,7 @@ class _ProfileState extends State<Profile> {
   int postCount = 0;
   int followerCount = 0;
   int followingCount = 0;
-  // List<Post> posts = [];
+  List<Post> posts = [];
 
   getStatus() {
     setState(() {
@@ -34,29 +35,55 @@ class _ProfileState extends State<Profile> {
     });
   }
 
-  getPosts() {
+  getPosts() async {
     setState(() {
       isLoading = true;
     });
 
-    QuerySnapshot snapshot = FirebaseFirestore.instance
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('User Posts')
         .doc(widget.profileId)
         .collection('pictures')
         .orderBy('timestamp', descending: true)
-        .get() as QuerySnapshot<Object?>;
+        .get();
 
     setState(() {
       isLoading = false;
       postCount = snapshot.docs.length;
-      print(postCount);
-      // posts = snapshot.docs.map((doc) => Post.fromDocument(doc)).toList();
+      posts = snapshot.docs.map((doc) => Post.fromDocument(doc)).toList();
     });
+  }
+
+  countColumn(String label, int count) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          count.toString(),
+          style: const TextStyle(
+            fontSize: 22.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Container(
+          margin: const EdgeInsets.only(top: 4.0),
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: Colors.grey,
+              fontSize: 15.0,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        )
+      ],
+    );
   }
 
   @override
   void initState() {
-    // getPosts();
+    getPosts();
     super.initState();
   }
 

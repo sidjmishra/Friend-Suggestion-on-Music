@@ -6,7 +6,7 @@ import 'package:spotify_music_auth/screens/activity.dart';
 import 'package:spotify_music_auth/screens/upload.dart';
 import 'package:spotify_music_auth/screens/home.dart';
 import 'package:spotify_music_auth/screens/player.dart';
-import 'package:spotify_music_auth/screens/profile.dart';
+import 'package:spotify_music_auth/screens/profile/profile.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);

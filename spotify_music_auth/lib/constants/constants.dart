@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:spotify_music_auth/screens/profile.dart';
+import 'package:spotify_music_auth/screens/profile/editprofile.dart';
+import 'package:spotify_music_auth/screens/profile/profile.dart';
 
 const kPrimaryColor = Color(0xFF6F35A5);
 const kPrimaryLightColor = Color(0xFFF1E6FF);
@@ -26,4 +27,11 @@ showProfile(BuildContext context, {required String profileId}) {
       ),
     ),
   );
+}
+
+editProfile(BuildContext context, {required String currentUserId}) {
+  Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => EditProfile(currentUserId: currentUserId)));
 }

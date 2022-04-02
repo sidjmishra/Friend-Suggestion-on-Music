@@ -3,6 +3,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:spotify_music_auth/constants/constants.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class Comments extends StatefulWidget {
   final String postId;
@@ -38,14 +40,17 @@ class CommentsState extends State<Comments> {
 
   buildComments() {
     return StreamBuilder<QuerySnapshot>(
-        stream: commentsRef
+        stream: FirebaseFirestore.instance
+            .collection('Comments')
             .doc(postId)
             .collection('comments')
             .orderBy('timeStamp', descending: false)
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) {
-            return circularProgress();
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
 
           List<Comment> comments = [];
@@ -55,14 +60,6 @@ class CommentsState extends State<Comments> {
           int count = snapshot.data.docs.length;
           print('There are $count posts');
 
-//          final List<Text> comments = snapshot.data.documents
-//              //get each doc and get username
-//              .map((doc) => Text(doc['userId'].toString()))
-//              .toList();
-//          print(comments);
-//          int count = snapshot.data.documents.length;
-//          print(count);
-
           return ListView(
             children: comments,
             //children: children,
@@ -71,25 +68,32 @@ class CommentsState extends State<Comments> {
   }
 
   addComment() {
-    commentsRef.doc(postId).collection('comments').add({
-      'username': currentUser!.username,
+    FirebaseFirestore.instance
+        .collection('Comments')
+        .doc(postId)
+        .collection('comments')
+        .add({
+      'username': Constants.userName,
       'comment': commentController.text,
-      'timeStamp': timestamp,
-      'avatarUrl': currentUser!.photoUrl,
-      'userId': currentUser!.id,
+      'timeStamp': DateTime.now(),
+      'avatarUrl': Constants.photoUrl,
+      'uid': Constants.uid,
     });
-    bool isNotPostOwner = postOwnerId != currentUser!.id;
+
+    bool isNotPostOwner = postOwnerId != Constants.uid;
     if (isNotPostOwner) {
-      //Add A Notification To Owners Activity Feed
-      activityFeedRef.doc(postOwnerId).collection('feedItems').add({
+      FirebaseFirestore.instance
+          .collection('Activity Feed')
+          .doc(postOwnerId)
+          .collection('feedItems')
+          .add({
         'type': 'comment',
         'commentData': commentController.text,
-        //User Who Liked The Post
-        'timestamp': timestamp,
+        'timeStamp': DateTime.now(),
         'postId': postId,
-        'userId': currentUser!.id,
-        'username': currentUser!.username,
-        'userProfileImg': currentUser!.photoUrl,
+        'uid': Constants.uid,
+        'username': Constants.userName,
+        'userProfileImg': Constants.photoUrl,
         'mediaUrl': postMediaUrl,
       });
     }
@@ -100,10 +104,18 @@ class CommentsState extends State<Comments> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: header(context, titleText: 'Comments'),
+      appBar: AppBar(
+        title: const Text(
+          "Comments",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: kPrimaryColor,
+      ),
       body: Column(
-        children: <Widget>[
-          Expanded(child: buildComments()),
+        children: [
+          Expanded(
+            child: buildComments(),
+          ),
           const Divider(),
           ListTile(
             title: TextFormField(
@@ -143,7 +155,7 @@ class Comment extends StatelessWidget {
   factory Comment.fromDocument(DocumentSnapshot doc) {
     return Comment(
       username: doc['username'],
-      userId: doc['userId'],
+      userId: doc['uid'],
       comment: doc['comment'],
       timestamp: doc['timeStamp'],
       avatarUrl: doc['avatarUrl'],
@@ -159,7 +171,6 @@ class Comment extends StatelessWidget {
           leading: CircleAvatar(
             backgroundImage: CachedNetworkImageProvider(avatarUrl),
           ),
-          //Need To Enable Firestore.instance.settings(timestampsInSnapshotsEnabled: true).then()
           subtitle: Text(timeago.format(timestamp.toDate())),
         ),
         const Divider(),
