@@ -23,7 +23,7 @@ class _HomeState extends State<Home> {
     const Player(),
     const Upload(),
     const Activity(),
-    const Profile(),
+    Profile(profileId: Constants.uid),
   ];
 
   @override
