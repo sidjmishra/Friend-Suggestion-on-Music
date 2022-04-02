@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:spotify_music_auth/components/post.dart';
+import 'package:spotify_music_auth/components/posttile.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/models/users.dart';
 import 'package:spotify_music_auth/screens/profile/editprofile.dart';
@@ -32,11 +35,20 @@ class _ProfileState extends State<Profile> {
 
   getStatus() {
     setState(() {
-      isFollowing =
-          Database().checkIfFollowing(widget.profileId, currentUserId);
-      followerCount = Database().getFollowers(widget.profileId);
-      followingCount = Database().getFollowing(widget.profileId);
+      Database()
+          .checkIfFollowing(widget.profileId, currentUserId)
+          .then((value) {
+        isFollowing = value;
+      });
+      Database().getFollowers(widget.profileId).then((value) {
+        followerCount = value;
+      });
+      Database().getFollowing(widget.profileId).then((value) {
+        followingCount = value;
+      });
     });
+    print(isFollowing);
+    print(followerCount);
   }
 
   getPosts() async {
@@ -48,7 +60,7 @@ class _ProfileState extends State<Profile> {
         .collection('User Posts')
         .doc(widget.profileId)
         .collection('pictures')
-        .orderBy('timestamp', descending: true)
+        .orderBy('timeStamp', descending: true)
         .get();
 
     setState(() {
@@ -363,7 +375,6 @@ class _ProfileState extends State<Profile> {
             child: CircularProgressIndicator(),
           );
         }
-
         PlayUser user =
             PlayUser.fromDocument(snapshot.data as DocumentSnapshot);
 
@@ -381,19 +392,19 @@ class _ProfileState extends State<Profile> {
                   Expanded(
                     flex: 1,
                     child: Column(
-                      children: <Widget>[
+                      children: [
                         Row(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            countColumn('posts', postCount),
-                            countColumn('followers', followerCount),
-                            countColumn('following', followingCount),
+                            countColumn('Posts', postCount),
+                            countColumn('Followers', followerCount),
+                            countColumn('Following', followingCount),
                           ],
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
+                          children: [
                             buildProfileButton(),
                           ],
                         )
@@ -422,9 +433,6 @@ class _ProfileState extends State<Profile> {
                 padding: const EdgeInsets.only(top: 4.0),
                 child: Text(
                   user.displayName ?? 'My Name',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
                 ),
               ),
 
@@ -453,7 +461,7 @@ class _ProfileState extends State<Profile> {
       return SizedBox(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+          children: [
             SvgPicture.asset('assets/no_content.svg', height: 260.0),
             const Padding(
               padding: EdgeInsets.only(top: 20.0),
@@ -496,9 +504,38 @@ class _ProfileState extends State<Profile> {
     }
   }
 
+  setPostOrientation(String postOrientation) {
+    setState(() {
+      this.postOrientation = postOrientation;
+    });
+  }
+
+  buildTogglePostOrientation() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        IconButton(
+          onPressed: () => setPostOrientation('grid'),
+          icon: const Icon(Icons.grid_on),
+          color: postOrientation == 'grid'
+              ? Theme.of(context).primaryColor
+              : Colors.grey,
+        ),
+        IconButton(
+          onPressed: () => setPostOrientation('list'),
+          icon: const Icon(Icons.list),
+          color: postOrientation == 'list'
+              ? Theme.of(context).primaryColor
+              : Colors.grey,
+        ),
+      ],
+    );
+  }
+
   @override
   void initState() {
     getPosts();
+    getStatus();
     super.initState();
   }
 
@@ -522,7 +559,17 @@ class _ProfileState extends State<Profile> {
           ),
         ],
       ),
-      body: const Text("Profile"),
+      body: ListView(
+        children: [
+          buildProfileHeader(),
+          const Divider(),
+          buildTogglePostOrientation(),
+          const Divider(
+            height: 0.0,
+          ),
+          buildProfilePosts(),
+        ],
+      ),
     );
   }
 }

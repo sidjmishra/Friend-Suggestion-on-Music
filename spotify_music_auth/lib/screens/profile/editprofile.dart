@@ -38,7 +38,7 @@ class _EditProfileState extends State<EditProfile> {
     });
 
     DocumentSnapshot doc = await FirebaseFirestore.instance
-        .collection('Users')
+        .collection("Users")
         .doc(widget.currentUserId)
         .get();
     user = PlayUser.fromDocument(doc);

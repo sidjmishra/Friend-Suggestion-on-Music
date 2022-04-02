@@ -68,7 +68,7 @@ class Database {
     room.where("users", arrayContains: userName).snapshots();
   }
 
-  checkIfFollowing(String profileId, String currentUserId) async {
+  Future<bool> checkIfFollowing(String profileId, String currentUserId) async {
     DocumentSnapshot doc = await followersRef
         .doc(profileId)
         .collection('userFollowers')
