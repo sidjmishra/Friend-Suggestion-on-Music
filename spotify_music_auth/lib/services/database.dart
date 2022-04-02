@@ -2,11 +2,14 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:spotify_music_auth/constants/helper.dart';
 import 'package:spotify_music_auth/models/users.dart';
 
 class Database {
   final db = FirebaseFirestore.instance.collection('Users');
   final room = FirebaseFirestore.instance.collection('ChatRoom');
+  final userPost = FirebaseFirestore.instance.collection('User Posts');
+  final posts = FirebaseFirestore.instance.collection('Posts');
 
   getUserByName(String username) async {
     return await db
@@ -60,6 +63,47 @@ class Database {
     room.where("users", arrayContains: userName).snapshots();
   }
 
+  Future addPostToDatabase(String postId, String uid, String location,
+      var imageFile, String username, String caption) async {
+    UploadTask uploadTask = FirebaseStorage.instance
+        .ref()
+        .child('$username/post_$postId.jpg')
+        .putFile(imageFile);
+    TaskSnapshot storageSnap =
+        await uploadTask.whenComplete(() => print("Completed"));
+    await storageSnap.ref.getDownloadURL().then((value) async {
+      print("Posted: $value");
+
+      await userPost.doc(uid).set({
+        "timeStamp": DateTime.now(),
+        "uid": uid,
+        "username": username,
+      });
+
+      await userPost.doc(uid).collection("pictures").doc(postId).set({
+        "uid": uid,
+        "username": username,
+        "postId": postId,
+        "caption": caption,
+        "location": location,
+        "mediaUrl": value,
+        "timeStamp": DateTime.now(),
+        "likes": {}
+      });
+
+      await posts.doc(postId).set({
+        "uid": uid,
+        "username": username,
+        "postId": postId,
+        "caption": caption,
+        "location": location,
+        "mediaUrl": value,
+        "timeStamp": DateTime.now(),
+        "likes": {}
+      });
+    });
+  }
+
   Future<bool> addUserToDatabase(PlayUser user, var _imageFile) async {
     String url = "";
     String fileName = _imageFile.path.toString();
@@ -72,6 +116,8 @@ class Database {
         await uploadTask.whenComplete(() => print("Uplaoded"));
     taskSnapshot.ref.getDownloadURL().then((value) async {
       print("Done: $value");
+
+      HelperFunction.saveUserPhotoUrlSharedPreference(value);
 
       await db.doc(user.uid).set({
         "uid": user.uid,

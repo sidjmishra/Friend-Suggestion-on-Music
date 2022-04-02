@@ -7,6 +7,7 @@ class Constants {
   static String uid = "";
   static String userName = "";
   static String displayName = "";
+  static String photoUrl = "";
 }
 
 extension StringExtension on String {

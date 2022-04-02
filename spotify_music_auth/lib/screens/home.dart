@@ -162,6 +162,13 @@ class _HomePageState extends State<HomePage> {
       });
       print(Constants.userName);
     });
+
+    HelperFunction.getUserPhotoUrlSharedPreference().then((value) {
+      setState(() {
+        Constants.photoUrl = value.toString();
+      });
+      print(Constants.photoUrl);
+    });
   }
 
   @override
@@ -183,22 +190,7 @@ class _HomePageState extends State<HomePage> {
         }
         return Scaffold(
           appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(
-                Icons.exit_to_app,
-                color: Colors.white,
-              ),
-              tooltip: "Logout",
-              onPressed: () {
-                AuthService().signOut().then((value) =>
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const Authenticate())));
-              },
-            ),
             title: const Text('Play-Connect'),
-            centerTitle: true,
             backgroundColor: kPrimaryColor,
             actions: [
               IconButton(

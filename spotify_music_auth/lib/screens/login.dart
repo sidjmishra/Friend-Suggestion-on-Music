@@ -47,6 +47,8 @@ class _LoginPageState extends State<LoginPage> {
                   snapshot.docs[0]["displayName"]);
               HelperFunction.saveUserUidSharedPreference(
                   snapshot.docs[0]["uid"]);
+              HelperFunction.saveUserPhotoUrlSharedPreference(
+                  snapshot.docs[0]["photoUrl"]);
             });
 
             HelperFunction.saveUserLoggedInSharedPreference(true);

@@ -3,7 +3,7 @@ import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/screens/activity.dart';
-import 'package:spotify_music_auth/screens/explore.dart';
+import 'package:spotify_music_auth/screens/upload.dart';
 import 'package:spotify_music_auth/screens/home.dart';
 import 'package:spotify_music_auth/screens/player.dart';
 import 'package:spotify_music_auth/screens/profile.dart';
@@ -20,8 +20,8 @@ class _HomeState extends State<Home> {
 
   final List<Widget> pages = [
     const HomePage(),
-    const Explore(),
     const Player(),
+    const Upload(),
     const Activity(),
     const Profile(),
   ];
@@ -46,13 +46,13 @@ class _HomeState extends State<Home> {
             icon: Icon(Icons.home),
             label: 'Home',
           ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Explore',
-          ),
           BottomNavigationBarItem(
             icon: LineIcon(LineIcons.playCircleAlt),
             label: 'Play',
+          ),
+          BottomNavigationBarItem(
+            icon: LineIcon(LineIcons.plusCircle),
+            label: 'Add Posts',
           ),
           BottomNavigationBarItem(
             icon: LineIcon(LineIcons.bellAlt),
