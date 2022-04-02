@@ -49,6 +49,7 @@ class _ProfileState extends State<Profile> {
     });
     print(isFollowing);
     print(followerCount);
+    print(followingCount);
   }
 
   getPosts() async {
@@ -57,7 +58,7 @@ class _ProfileState extends State<Profile> {
     });
 
     QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection('User Posts')
+        .collection("User Posts")
         .doc(widget.profileId)
         .collection('pictures')
         .orderBy('timeStamp', descending: true)
@@ -245,6 +246,13 @@ class _ProfileState extends State<Profile> {
                   .collection('userFollowing')
                   .doc(widget.profileId)
                   .set({});
+
+              FirebaseFirestore.instance
+                  .collection('Activity Feed')
+                  .doc(widget.profileId)
+                  .set({
+                'timeStamp': DateTime.now(),
+              });
               FirebaseFirestore.instance
                   .collection('Activity Feed')
                   .doc(widget.profileId)
@@ -255,7 +263,7 @@ class _ProfileState extends State<Profile> {
                 'ownerId': widget.profileId,
                 'username': Constants.userName,
                 'uid': currentUserId,
-                'userProfileImg': Constants.photoUrl,
+                'photoUrl': Constants.photoUrl,
                 'timeStamp': DateTime.now(),
                 'commentData': '',
                 'postId': '',
@@ -344,6 +352,13 @@ class _ProfileState extends State<Profile> {
         .collection('userFollowing')
         .doc(widget.profileId)
         .set({});
+
+    FirebaseFirestore.instance
+        .collection('Activity Feed')
+        .doc(widget.profileId)
+        .set({
+      'timeStamp': DateTime.now(),
+    });
 
     FirebaseFirestore.instance
         .collection("Activity Feed")
@@ -513,7 +528,7 @@ class _ProfileState extends State<Profile> {
   buildTogglePostOrientation() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: <Widget>[
+      children: [
         IconButton(
           onPressed: () => setPostOrientation('grid'),
           icon: const Icon(Icons.grid_on),

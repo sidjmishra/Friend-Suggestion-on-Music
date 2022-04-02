@@ -200,17 +200,18 @@ class _UploadState extends State<Upload>
                 )
               : const Text(''),
           SizedBox(
-            height: 220.0,
+            height: 300.0,
             width: MediaQuery.of(context).size.width * 0.8,
             child: Center(
               child: AspectRatio(
                 aspectRatio: 16 / 9,
                 child: Container(
                   decoration: BoxDecoration(
-                      image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: FileImage(_imageFile),
-                  )),
+                    image: DecorationImage(
+                      fit: BoxFit.contain,
+                      image: FileImage(_imageFile),
+                    ),
+                  ),
                 ),
               ),
             ),

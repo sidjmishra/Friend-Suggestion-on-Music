@@ -185,6 +185,9 @@ class Database {
   }
 
   addLikeToActivityFeed(String uid, String postId, String mediaUrl) {
+    feed.doc(uid).set({
+      'timeStamp': DateTime.now(),
+    });
     feed.doc(uid).collection('feedItems').doc(postId).set({
       'type': 'like',
       'username': Constants.userName,
@@ -194,6 +197,7 @@ class Database {
       'mediaUrl': mediaUrl,
       'timeStamp': DateTime.now(),
       'commentData': '',
+      'ownerId': '',
     });
   }
 

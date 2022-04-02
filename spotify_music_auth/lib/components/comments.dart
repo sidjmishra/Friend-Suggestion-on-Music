@@ -83,6 +83,12 @@ class CommentsState extends State<Comments> {
     bool isNotPostOwner = postOwnerId != Constants.uid;
     if (isNotPostOwner) {
       FirebaseFirestore.instance
+          .collection("Activity Feed")
+          .doc(postOwnerId)
+          .update({
+        "timeStamp": DateTime.now(),
+      });
+      FirebaseFirestore.instance
           .collection('Activity Feed')
           .doc(postOwnerId)
           .collection('feedItems')

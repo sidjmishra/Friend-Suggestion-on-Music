@@ -1,7 +1,10 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
+import 'package:spotify_music_auth/constants/helper.dart';
 import 'package:spotify_music_auth/screens/activity.dart';
 import 'package:spotify_music_auth/screens/upload.dart';
 import 'package:spotify_music_auth/screens/home.dart';
@@ -17,17 +20,32 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _currentPage = 0;
+  String userUid = "";
 
-  final List<Widget> pages = [
-    const HomePage(),
-    const Player(),
-    const Upload(),
-    const Activity(),
-    Profile(profileId: Constants.uid),
-  ];
+  getUid() {
+    HelperFunction.getUserUidSharedPreference().then((value) {
+      setState(() {
+        userUid = value!;
+      });
+      print(userUid);
+    });
+  }
+
+  @override
+  void initState() {
+    getUid();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> pages = [
+      const HomePage(),
+      const Player(),
+      const Upload(),
+      const Activity(),
+      Profile(profileId: userUid),
+    ];
     return Scaffold(
       body: pages[_currentPage],
       bottomNavigationBar: BottomNavigationBar(

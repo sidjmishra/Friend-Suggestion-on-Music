@@ -106,31 +106,52 @@ class _PostState extends State<Post> {
               PlayUser.fromDocument(snapshot.data as DocumentSnapshot);
           bool isPostOwner = currentUserId == uid;
           return Padding(
-            padding: const EdgeInsets.only(top: 15.0),
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundImage: CachedNetworkImageProvider(Constants.photoUrl),
-                backgroundColor: Colors.grey,
-              ),
-              title: GestureDetector(
-                onTap: () => showProfile(context, profileId: user.uid),
-                child: Text(
-                  Constants.userName,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CircleAvatar(
+                      backgroundImage:
+                          CachedNetworkImageProvider(Constants.photoUrl),
+                      backgroundColor: Colors.grey,
+                    ),
+                    const SizedBox(width: 20.0),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        GestureDetector(
+                          onTap: () =>
+                              showProfile(context, profileId: user.uid),
+                          child: Text(
+                            Constants.userName,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          location,
+                          style: const TextStyle(fontSize: 12.0),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ),
-              subtitle: Text(location),
-              trailing: isPostOwner
-                  ? IconButton(
-                      onPressed: () => handleDeletePost(context),
-                      icon: const Icon(
-                        Icons.more_vert,
-                      ),
-                    )
-                  : const Text(''),
+                isPostOwner
+                    ? IconButton(
+                        onPressed: () => handleDeletePost(context),
+                        icon: const Icon(
+                          Icons.more_vert,
+                        ),
+                      )
+                    : const Text(''),
+              ],
             ),
           );
         });
@@ -251,14 +272,14 @@ class _PostState extends State<Post> {
             const Padding(
               padding: EdgeInsets.only(
                 top: 40.0,
-                left: 20.0,
+                left: 10.0,
               ),
             ),
             GestureDetector(
               onTap: handleLikePost,
               child: Icon(
                 isLiked ? Icons.favorite : Icons.favorite_border,
-                size: 28.0,
+                size: 25.0,
                 color: Colors.pink,
               ),
             ),
@@ -277,21 +298,20 @@ class _PostState extends State<Post> {
               ),
               child: Icon(
                 Icons.chat,
-                size: 28.0,
+                size: 25.0,
                 color: Colors.blue[900],
               ),
             )
           ],
         ),
         Row(
-          children: <Widget>[
+          children: [
             Container(
-              margin: const EdgeInsets.only(left: 20.0),
+              margin: const EdgeInsets.only(left: 10.0),
               child: Text(
                 '$likeCount likes  $commentCount comments',
                 style: const TextStyle(
                   color: Colors.black,
-                  fontWeight: FontWeight.bold,
                 ),
               ),
             )
@@ -299,9 +319,9 @@ class _PostState extends State<Post> {
         ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             Container(
-              margin: const EdgeInsets.only(left: 20.0),
+              margin: const EdgeInsets.only(left: 10.0),
               child: Text(
                 '$username ',
                 style: const TextStyle(
@@ -323,13 +343,15 @@ class _PostState extends State<Post> {
   Widget build(BuildContext context) {
     isLiked = (likes[currentUserId] == true);
     Database().getCommentCount(postId);
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        buildPostHeader(),
-        buildPostImage(),
-        buildPostFooter(),
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10.0),
+      child: Column(
+        children: [
+          buildPostHeader(),
+          buildPostImage(),
+          buildPostFooter(),
+        ],
+      ),
     );
   }
 }
