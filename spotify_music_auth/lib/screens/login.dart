@@ -3,12 +3,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:spotify_music_auth/actual.dart';
 import 'package:spotify_music_auth/components/alreadyhaveaccount.dart';
 import 'package:spotify_music_auth/components/roundedbutton.dart';
 import 'package:spotify_music_auth/components/textfieldcontainer.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/constants/helper.dart';
+import 'package:spotify_music_auth/screens/screens.dart';
 import 'package:spotify_music_auth/screens/signup.dart';
 import 'package:spotify_music_auth/services/auth.dart';
 import 'package:spotify_music_auth/services/database.dart';
@@ -39,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
         await authService.signInPlay(email.text, password.text).then((value) {
           print(value);
           if (value != 'error') {
-            Database().getUserByName(email.text).then((value) {
+            Database().getUserByEmail(email.text).then((value) {
               snapshot = value;
               HelperFunction.saveUserNameSharedPreference(
                   snapshot.docs[0]["username"]);

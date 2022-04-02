@@ -11,20 +11,20 @@ import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
 Future<void> main() async {
-  runApp(const Home());
+  runApp(const HomeActual());
 }
 
 /// A [StatefulWidget] which uses:
 /// * [spotify_sdk](https://pub.dev/packages/spotify_sdk)
 /// to connect to Spotify and use controls.
-class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+class HomeActual extends StatefulWidget {
+  const HomeActual({Key? key}) : super(key: key);
 
   @override
-  _HomeState createState() => _HomeState();
+  _HomeActualState createState() => _HomeActualState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeActualState extends State<HomeActual> {
   bool _loading = false;
   bool _connected = false;
   final Logger _logger = Logger(

@@ -19,6 +19,15 @@ class Database {
         .get();
   }
 
+  getUserByUid(String uid) async {
+    return db
+        .where(
+          "uid",
+          isEqualTo: uid,
+        )
+        .snapshots();
+  }
+
   createChatRoom(String chatRoomId, Map<String, dynamic> chatRoomMap) async {
     await room.doc(chatRoomId).set(chatRoomMap).catchError((error) {
       print(error.toString());
@@ -39,8 +48,16 @@ class Database {
     });
   }
 
-  Future<dynamic> getConversation(String chatRoomId) async {
+  getStreamConversation(String chatRoomId) async {
+    return room.doc(chatRoomId).collection("chats").orderBy("time").snapshots();
+  }
+
+  getConversation(String chatRoomId) async {
     return room.doc(chatRoomId).collection("chats").get();
+  }
+
+  getChatRoom(String userName) async {
+    room.where("users", arrayContains: userName).snapshots();
   }
 
   Future<bool> addUserToDatabase(PlayUser user, var _imageFile) async {

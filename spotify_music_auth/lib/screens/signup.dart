@@ -2,14 +2,15 @@
 
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:spotify_music_auth/actual.dart';
 import 'package:spotify_music_auth/components/alreadyhaveaccount.dart';
 import 'package:spotify_music_auth/components/roundedbutton.dart';
 import 'package:spotify_music_auth/components/textfieldcontainer.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/screens/login.dart';
+import 'package:spotify_music_auth/screens/screens.dart';
 import 'package:spotify_music_auth/services/auth.dart';
 
 class SignUp extends StatefulWidget {
@@ -35,6 +36,8 @@ class _SignUpState extends State<SignUp> {
   var _imageFile;
 
   bool isImage = false;
+
+  List users = [];
 
   Future pickImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -75,6 +78,16 @@ class _SignUpState extends State<SignUp> {
         duration: const Duration(milliseconds: 300),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    FirebaseFirestore.instance.collection('Users').get().then((value) {
+      for (var v in value.docs) {
+        users.add(v["username"]);
+      }
+    });
+    super.initState();
   }
 
   @override
@@ -140,7 +153,11 @@ class _SignUpState extends State<SignUp> {
                       TextFieldContainer(
                         child: TextFormField(
                           validator: (val) {
-                            return val!.length < 3 ? 'Enter valid name' : null;
+                            return val!.length < 3
+                                ? 'Enter valid name'
+                                : users.contains(val)
+                                    ? "Username already exists!"
+                                    : null;
                           },
                           keyboardType: TextInputType.name,
                           controller: username,

@@ -46,12 +46,13 @@ class _SearchChatState extends State<SearchChat> {
                 searchResultSnapshot.docs[index]["username"],
                 searchResultSnapshot.docs[index]["displayName"],
                 searchResultSnapshot.docs[index]["photoUrl"],
+                searchResultSnapshot.docs[index]["uid"],
               );
             })
         : Container();
   }
 
-  sendMessage(String userName) {
+  sendMessage(String userName, String userUid) {
     List<String> users = [Constants.userName, userName];
 
     String chatRoomId = getChatRoomId(Constants.userName, userName);
@@ -59,6 +60,8 @@ class _SearchChatState extends State<SearchChat> {
     Map<String, dynamic> chatRoom = {
       "users": users,
       "chatRoomId": chatRoomId,
+      "uids": [Constants.uid, userUid],
+      "timeStamp": DateTime.now().millisecondsSinceEpoch,
     };
 
     Database().createChatRoom(chatRoomId, chatRoom);
@@ -72,7 +75,8 @@ class _SearchChatState extends State<SearchChat> {
                 )));
   }
 
-  Widget userTile(String username, String displayName, String imgUrl) {
+  Widget userTile(
+      String username, String displayName, String imgUrl, String userUid) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Row(
@@ -98,7 +102,7 @@ class _SearchChatState extends State<SearchChat> {
           const Spacer(),
           GestureDetector(
             onTap: () {
-              sendMessage(username);
+              sendMessage(username, userUid);
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

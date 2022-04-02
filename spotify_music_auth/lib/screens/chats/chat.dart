@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
@@ -58,6 +59,12 @@ class _ChatState extends State<Chat> {
         "time": DateTime.now().millisecondsSinceEpoch,
       };
 
+      FirebaseFirestore.instance
+          .collection('ChatRoom')
+          .doc(widget.chatRoomId)
+          .update({
+        "timeStamp": DateTime.now().millisecondsSinceEpoch,
+      });
       Database().addConversation(widget.chatRoomId, chatMessageMap);
 
       setState(() {
@@ -85,22 +92,52 @@ class _ChatState extends State<Chat> {
         child: Column(
           children: [
             Expanded(
-              child: FutureBuilder(
-                future: Database().getConversation(widget.chatRoomId),
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('ChatRoom')
+                    .doc(widget.chatRoomId)
+                    .collection("chats")
+                    .orderBy("time", descending: true)
+                    .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
-                    return const CircularProgressIndicator(
-                        color: kPrimaryColor);
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: kPrimaryColor,
+                      ),
+                    );
                   }
-                  AsyncSnapshot<Object?> querySnapshot = snapshot;
-                  return chatList(querySnapshot);
+                  final List<DocumentSnapshot> documents = snapshot.data!.docs;
+                  return ListView.builder(
+                      reverse: true,
+                      itemCount: documents.length,
+                      itemBuilder: (context, index) {
+                        return MessageTile(
+                          message: documents[index]["message"],
+                          sendByMe:
+                              Constants.userName == documents[index]["sendBy"],
+                        );
+                      });
                 },
               ),
             ),
+            // Expanded(
+            //   child: FutureBuilder(
+            //     future: Database().getConversation(widget.chatRoomId),
+            //     builder: (context, snapshot) {
+            //       if (!snapshot.hasData) {
+            //         return const CircularProgressIndicator(
+            //             color: kPrimaryColor);
+            //       }
+            //       AsyncSnapshot<Object?> querySnapshot = snapshot;
+            //       return chatList(querySnapshot);
+            //     },
+            //   ),
+            // ),
             Container(
               alignment: Alignment.bottomCenter,
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * (0.1),
+              // height: MediaQuery.of(context).size.height * (0.1),
               child: Container(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 10.0, vertical: 15.0),

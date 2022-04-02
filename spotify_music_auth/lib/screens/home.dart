@@ -143,15 +143,24 @@ class _HomePageState extends State<HomePage> {
 
   getUserInfo() async {
     HelperFunction.getUserUidSharedPreference().then((value) {
-      Constants.uid = value!;
+      setState(() {
+        Constants.uid = value!.toString();
+      });
+      print(Constants.uid);
     });
 
     HelperFunction.getUserDisplaySharedPreference().then((value) {
-      Constants.displayName = value!;
+      setState(() {
+        Constants.displayName = value!.toString();
+      });
+      print(Constants.displayName);
     });
 
     HelperFunction.getUserNameSharedPreference().then((value) {
-      Constants.userName = value!;
+      setState(() {
+        Constants.userName = value!.toString();
+      });
+      print(Constants.userName);
     });
   }
 
@@ -213,7 +222,8 @@ class _HomePageState extends State<HomePage> {
               : Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text("Spotify connected: $accessToken"),
+                    Text(
+                        "Spotify connected: $accessToken ${Constants.userName}"),
                   ],
                 ),
         );
