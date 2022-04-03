@@ -74,16 +74,23 @@ class _PlayerState extends State<Player> {
       setState(() {
         _loading = true;
       });
+
       var result = await SpotifySdk.connectToSpotifyRemote(
           clientId: '0d13cfc9b5564ffe92fea35cb587c7c2',
           redirectUrl: 'http://localhost:8000/callback');
+      // var result = await SpotifySdk.connectToSpotifyRemote(
+      //     clientId: 'fde1b305d84d4def947ebd284e218e49',
+      //     redirectUrl: 'http://localhost:8000/callback');
       setStatus(result
           ? 'connect to spotify successful'
           : 'connect to spotify failed');
       setState(() {
         _loading = false;
+        _connected = result;
       });
+      print(_connected);
     } on PlatformException catch (e) {
+      print("Exception:" + e.toString());
       setState(() {
         _loading = false;
       });
@@ -113,7 +120,7 @@ class _PlayerState extends State<Player> {
     return StreamBuilder<ConnectionStatus>(
       stream: SpotifySdk.subscribeConnectionStatus(),
       builder: (context, snapshot) {
-        _connected = false;
+        // _connected = result;
         var data = snapshot.data;
         if (data != null) {
           _connected = data.connected;
@@ -193,13 +200,13 @@ class _PlayerState extends State<Player> {
                 ),
               ),
               const Divider(),
-              Text(
-                'Album: ${track.album.name}',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.openSans(
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+              // Text(
+              //   'Album: ${track.album.name}',
+              //   textAlign: TextAlign.center,
+              //   style: GoogleFonts.openSans(
+              //     fontWeight: FontWeight.w500,
+              //   ),
+              // ),
               // Text(
               //     'Progress: ${(playerState.playbackPosition ~/ 1000) / 100} / ${(track.duration ~/ 1000) / 100}  '),
               const Divider(),

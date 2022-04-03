@@ -113,7 +113,7 @@ class _HomePageState extends State<HomePage> {
   Future<String> getAuthenticationToken() async {
     try {
       var authenticationToken = await SpotifySdk.getAuthenticationToken(
-          clientId: 'fde1b305d84d4def947ebd284e218e49',
+          clientId: '0d13cfc9b5564ffe92fea35cb587c7c2',
           redirectUrl: 'http://localhost:8000/callback',
           scope: 'app-remote-control, '
               // 'user-read-private, user-read-email, '
@@ -122,9 +122,11 @@ class _HomePageState extends State<HomePage> {
               // 'user-library-modify, user-top-read, playlist-read-collaborative, '
               // 'ugc-image-upload, user-follow-read, user-follow-modify, user-read-playback-state, '
               // 'user-modify-playback-state, user-read-currently-playing, user-read-recently-played'
-              'user-modify-playback-state, '
+              'user-modify-playback-state, user-top-read, '
               'playlist-read-private, '
               'playlist-modify-public,user-read-currently-playing');
+      // var authenticationToken =
+      //     "BQA1RtgPD0XRzxlzbwXIxxpTx4TXCiyBarUVVgY1tjYba2amrCiM0MvutRjilqUEB1HVJ9sAqSGHNTJICKpq_lR2xVJtp6qRx7syg75QnwrsFxsgHsH-t2AQUI4fixMwzUgt45982kzxLh_87ajVICHzJ5WPhNb5YYIMer8hMsJWbPGnvtub6732UW2VIspyVKLBoNDKxABFW-JUvj2Oq8-7uAB_mMc";
       setStatus('Got a token: $authenticationToken');
       Map<String, dynamic> data =
           await UserProfileResponse(accessToken: authenticationToken)
@@ -215,7 +217,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-            body: accessToken != ""
+            body: accessToken == ""
                 ? const Center(
                     child: CircularProgressIndicator(
                       color: kPrimaryColor,

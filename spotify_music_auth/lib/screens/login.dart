@@ -13,6 +13,7 @@ import 'package:spotify_music_auth/screens/screens.dart';
 import 'package:spotify_music_auth/screens/signup.dart';
 import 'package:spotify_music_auth/services/auth.dart';
 import 'package:spotify_music_auth/services/database.dart';
+import 'package:spotify_music_auth/services/locationservice.dart';
 
 class LoginPage extends StatefulWidget {
   final Function? toggleView;
@@ -73,6 +74,12 @@ class _LoginPageState extends State<LoginPage> {
         ),
       );
     }
+  }
+
+  @override
+  void initState() {
+    LocationService().getLocation();
+    super.initState();
   }
 
   @override
