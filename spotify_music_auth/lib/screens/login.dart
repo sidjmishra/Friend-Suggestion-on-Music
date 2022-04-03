@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:spotify_music_auth/components/alreadyhaveaccount.dart';
 import 'package:spotify_music_auth/components/roundedbutton.dart';
 import 'package:spotify_music_auth/components/textfieldcontainer.dart';
@@ -107,9 +108,11 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      const Text(
+                      Text(
                         "LOGIN",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: GoogleFonts.openSans(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       SizedBox(height: size.height * 0.03),
                       SvgPicture.asset(

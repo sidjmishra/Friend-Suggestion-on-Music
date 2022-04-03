@@ -3,6 +3,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -115,9 +116,11 @@ class CommentsState extends State<Comments> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           "Comments",
-          style: TextStyle(color: Colors.white),
+          style: GoogleFonts.openSans(
+            color: Colors.white,
+          ),
         ),
         backgroundColor: kPrimaryColor,
       ),
@@ -137,7 +140,10 @@ class CommentsState extends State<Comments> {
             trailing: OutlineButton(
               onPressed: addComment,
               borderSide: BorderSide.none,
-              child: const Text('Post'),
+              child: Text(
+                'Post',
+                style: GoogleFonts.openSans(),
+              ),
             ),
           )
         ],
@@ -177,11 +183,17 @@ class Comment extends StatelessWidget {
     return Column(
       children: <Widget>[
         ListTile(
-          title: Text(comment),
+          title: Text(
+            comment,
+            style: GoogleFonts.openSans(),
+          ),
           leading: CircleAvatar(
             backgroundImage: CachedNetworkImageProvider(avatarUrl),
           ),
-          subtitle: Text(timeago.format(timestamp.toDate())),
+          subtitle: Text(
+            timeago.format(timestamp.toDate()),
+            style: GoogleFonts.openSans(),
+          ),
         ),
         const Divider(),
       ],

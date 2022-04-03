@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/screens/chats/chat.dart';
 import 'package:spotify_music_auth/services/database.dart';
@@ -91,11 +92,17 @@ class _SearchChatState extends State<SearchChat> {
             children: [
               Text(
                 username,
-                style: const TextStyle(color: Colors.black, fontSize: 16),
+                style: GoogleFonts.openSans(
+                  color: Colors.black,
+                  fontSize: 16,
+                ),
               ),
               Text(
                 displayName,
-                style: const TextStyle(color: Colors.black, fontSize: 16),
+                style: GoogleFonts.openSans(
+                  color: Colors.black,
+                  fontSize: 16,
+                ),
               ),
             ],
           ),
@@ -109,9 +116,12 @@ class _SearchChatState extends State<SearchChat> {
               decoration: BoxDecoration(
                   color: kPrimaryColor,
                   borderRadius: BorderRadius.circular(24)),
-              child: const Text(
+              child: Text(
                 "Message",
-                style: TextStyle(color: Colors.white, fontSize: 16),
+                style: GoogleFonts.openSans(
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
               ),
             ),
           )

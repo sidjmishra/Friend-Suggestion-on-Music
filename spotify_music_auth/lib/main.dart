@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:spotify_music_auth/services/auth.dart';
 
 Future<void> main() async {
@@ -33,7 +34,10 @@ class Home extends StatelessWidget {
             title: "Play Connect",
             debugShowCheckedModeBanner: false,
             home: Center(
-              child: Text(snapshot.error.toString()),
+              child: Text(
+                snapshot.error.toString(),
+                style: GoogleFonts.openSans(),
+              ),
             ),
           );
         }

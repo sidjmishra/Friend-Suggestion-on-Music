@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/services/database.dart';
 
@@ -67,11 +68,17 @@ class _SearchUserState extends State<SearchUser> {
             children: [
               Text(
                 username,
-                style: const TextStyle(color: Colors.black, fontSize: 16),
+                style: GoogleFonts.openSans(
+                  color: Colors.black,
+                  fontSize: 16,
+                ),
               ),
               Text(
                 displayName,
-                style: const TextStyle(color: Colors.black, fontSize: 12),
+                style: GoogleFonts.openSans(
+                  color: Colors.black,
+                  fontSize: 12,
+                ),
               ),
             ],
           ),
@@ -85,9 +92,12 @@ class _SearchUserState extends State<SearchUser> {
               decoration: BoxDecoration(
                   color: kPrimaryColor,
                   borderRadius: BorderRadius.circular(24)),
-              child: const Text(
+              child: Text(
                 "View Profile",
-                style: TextStyle(color: Colors.white, fontSize: 14),
+                style: GoogleFonts.openSans(
+                  color: Colors.white,
+                  fontSize: 14,
+                ),
               ),
             ),
           )

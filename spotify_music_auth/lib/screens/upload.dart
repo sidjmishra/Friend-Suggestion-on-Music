@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
@@ -69,20 +70,31 @@ class _UploadState extends State<Upload>
       context: parentContext,
       builder: (context) {
         return SimpleDialog(
-          title: const Text('Create Post'),
+          title: Text(
+            'Create Post',
+            style: GoogleFonts.openSans(),
+          ),
           children: [
             SimpleDialogOption(
-              child: const Text('Photo with Camera'),
+              child: Text(
+                'Photo with Camera',
+                style: GoogleFonts.openSans(),
+              ),
               onPressed: () => takePhoto(context),
             ),
             SimpleDialogOption(
-              child: const Text('Image From Gallery'),
+              child: Text(
+                'Image From Gallery',
+                style: GoogleFonts.openSans(),
+              ),
               onPressed: () => chooseFromGallery(context),
             ),
             SimpleDialogOption(
-              child: const Text(
+              child: Text(
                 'Cancel',
-                style: TextStyle(color: Colors.red),
+                style: GoogleFonts.openSans(
+                  color: Colors.red,
+                ),
               ),
               onPressed: () => Navigator.pop(context),
             )
@@ -129,7 +141,10 @@ class _UploadState extends State<Upload>
   Widget splashScreen() {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Upload Post"),
+        title: Text(
+          "Upload Post",
+          style: GoogleFonts.openSans(),
+        ),
         backgroundColor: kPrimaryColor,
         automaticallyImplyLeading: false,
       ),
@@ -150,9 +165,9 @@ class _UploadState extends State<Upload>
                     ),
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   'Upload Image',
-                  style: TextStyle(
+                  style: GoogleFonts.openSans(
                     color: Colors.white,
                   ),
                 ),
@@ -179,16 +194,18 @@ class _UploadState extends State<Upload>
                 context, MaterialPageRoute(builder: (context) => const Home()));
           },
         ),
-        title: const Text(
+        title: Text(
           'Upload Post',
-          style: TextStyle(color: Colors.black),
+          style: GoogleFonts.openSans(
+            color: Colors.black,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: isUpLoading ? null : () => handleSubmit(),
-            child: const Text(
+            child: Text(
               'Post',
-              style: TextStyle(
+              style: GoogleFonts.openSans(
                 color: kPrimaryColor,
                 fontWeight: FontWeight.bold,
                 fontSize: 20.0,

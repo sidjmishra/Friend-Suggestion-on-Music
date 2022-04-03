@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
@@ -49,7 +50,10 @@ class _ChatState extends State<Chat> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.chatName.capitalize()),
+        title: Text(
+          widget.chatName.capitalize(),
+          style: GoogleFonts.openSans(),
+        ),
         backgroundColor: kPrimaryColor,
       ),
       body: SizedBox(
@@ -195,12 +199,14 @@ class MessageTile extends StatelessWidget {
                   topRight: Radius.circular(23),
                   bottomRight: Radius.circular(23)),
         ),
-        child: Text(message,
-            textAlign: TextAlign.start,
-            style: TextStyle(
-                color: sendByMe ? Colors.white : Colors.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w300)),
+        child: Text(
+          message,
+          textAlign: TextAlign.start,
+          style: GoogleFonts.openSans(
+              color: sendByMe ? Colors.white : Colors.black,
+              fontSize: 16,
+              fontWeight: FontWeight.w300),
+        ),
       ),
     );
   }

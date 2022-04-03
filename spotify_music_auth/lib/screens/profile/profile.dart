@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:spotify_music_auth/components/post.dart';
@@ -78,7 +79,7 @@ class _ProfileState extends State<Profile> {
       children: [
         Text(
           count.toString(),
-          style: const TextStyle(
+          style: GoogleFonts.openSans(
             fontSize: 22.0,
             fontWeight: FontWeight.bold,
           ),
@@ -87,7 +88,7 @@ class _ProfileState extends State<Profile> {
           margin: const EdgeInsets.only(top: 4.0),
           child: Text(
             label,
-            style: const TextStyle(
+            style: GoogleFonts.openSans(
               color: Colors.grey,
               fontSize: 15.0,
               fontWeight: FontWeight.w400,
@@ -111,7 +112,7 @@ class _ProfileState extends State<Profile> {
             height: 27.0,
             child: Text(
               text,
-              style: TextStyle(
+              style: GoogleFonts.openSans(
                 color: isFollowing ? Colors.black : Colors.white,
                 fontWeight: FontWeight.bold,
               ),
@@ -147,7 +148,7 @@ class _ProfileState extends State<Profile> {
               height: 27.0,
               child: Text(
                 "Edit Profile",
-                style: TextStyle(
+                style: GoogleFonts.openSans(
                   color: isFollowing ? Colors.black : Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
@@ -210,7 +211,7 @@ class _ProfileState extends State<Profile> {
               height: 27.0,
               child: Text(
                 "Unfollow",
-                style: TextStyle(
+                style: GoogleFonts.openSans(
                   color: isFollowing ? Colors.black : Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
@@ -275,7 +276,7 @@ class _ProfileState extends State<Profile> {
               height: 27.0,
               child: Text(
                 "Follow",
-                style: TextStyle(
+                style: GoogleFonts.openSans(
                   color: isFollowing ? Colors.black : Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
@@ -435,7 +436,7 @@ class _ProfileState extends State<Profile> {
                 padding: const EdgeInsets.only(top: 12.0),
                 child: Text(
                   user.username!,
-                  style: const TextStyle(
+                  style: GoogleFonts.openSans(
                     fontWeight: FontWeight.bold,
                     fontSize: 16.0,
                   ),
@@ -448,6 +449,7 @@ class _ProfileState extends State<Profile> {
                 padding: const EdgeInsets.only(top: 4.0),
                 child: Text(
                   user.displayName ?? 'My Name',
+                  style: GoogleFonts.openSans(),
                 ),
               ),
 
@@ -457,7 +459,9 @@ class _ProfileState extends State<Profile> {
                 padding: const EdgeInsets.only(top: 2.0),
                 child: Text(
                   user.bio ?? 'Work In Progress',
-                  style: TextStyle(color: Theme.of(context).primaryColor),
+                  style: GoogleFonts.openSans(
+                    color: Theme.of(context).primaryColor,
+                  ),
                 ),
               )
             ],
@@ -478,11 +482,11 @@ class _ProfileState extends State<Profile> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SvgPicture.asset('assets/no_content.svg', height: 260.0),
-            const Padding(
-              padding: EdgeInsets.only(top: 20.0),
+            Padding(
+              padding: const EdgeInsets.only(top: 20.0),
               child: Text(
                 'No Posts',
-                style: TextStyle(
+                style: GoogleFonts.openSans(
                   color: Colors.redAccent,
                   fontSize: 40.0,
                   fontWeight: FontWeight.bold,
@@ -564,7 +568,10 @@ class _ProfileState extends State<Profile> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Play-Connect'),
+        title: Text(
+          'Play-Connect',
+          style: GoogleFonts.openSans(),
+        ),
         backgroundColor: kPrimaryColor,
         actions: [
           widget.profileId == Constants.uid

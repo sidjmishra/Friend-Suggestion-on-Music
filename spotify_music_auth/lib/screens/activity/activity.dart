@@ -3,6 +3,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:spotify_music_auth/components/postscreen.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/screens/activity/searchuser.dart';
@@ -37,11 +38,11 @@ class _ActivityState extends State<Activity> {
   }
 
   Widget emptyActivityFeed() {
-    return const Center(
+    return Center(
       child: SizedBox(
         child: Text(
           'No Activity Just Yet',
-          style: TextStyle(
+          style: GoogleFonts.openSans(
             fontSize: 20,
             color: Colors.black87,
             fontWeight: FontWeight.w300,
@@ -56,7 +57,10 @@ class _ActivityState extends State<Activity> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Activity Feed'),
+        title: Text(
+          'Activity Feed',
+          style: GoogleFonts.openSans(),
+        ),
         backgroundColor: kPrimaryColor,
       ),
       floatingActionButton: FloatingActionButton(
@@ -233,6 +237,7 @@ class ActivityFeedItem extends StatelessWidget {
             timeago.format(
               timeStamp.toDate(),
             ),
+            style: GoogleFonts.openSans(),
             overflow: TextOverflow.ellipsis,
           ),
           trailing: mediaPreview,
