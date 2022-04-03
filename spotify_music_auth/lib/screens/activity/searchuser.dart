@@ -16,9 +16,11 @@ class SearchUser extends StatefulWidget {
 class _SearchUserState extends State<SearchUser> {
   TextEditingController searchEditingController = TextEditingController();
   late QuerySnapshot searchResultSnapshot;
+  late QuerySnapshot searchSnapshot;
 
   bool isLoading = false;
   bool haveUserSearched = false;
+  bool users = false;
 
   initiateSearch() async {
     if (searchEditingController.text.isNotEmpty) {
@@ -32,13 +34,24 @@ class _SearchUserState extends State<SearchUser> {
         print("$searchResultSnapshot");
         setState(() {
           isLoading = false;
+          users = false;
           haveUserSearched = true;
         });
       });
     }
   }
 
+  getUserList() async {
+    await FirebaseFirestore.instance.collection('Users').get().then((value) {
+      setState(() {
+        searchSnapshot = value;
+        users = true;
+      });
+    });
+  }
+
   Widget userList() {
+    getUserList();
     return haveUserSearched
         ? ListView.builder(
             shrinkWrap: true,
@@ -51,7 +64,19 @@ class _SearchUserState extends State<SearchUser> {
                 searchResultSnapshot.docs[index]["uid"],
               );
             })
-        : Container();
+        : users
+            ? ListView.builder(
+                shrinkWrap: true,
+                itemCount: searchSnapshot.docs.length,
+                itemBuilder: (context, index) {
+                  return userTile(
+                    searchSnapshot.docs[index]["username"],
+                    searchSnapshot.docs[index]["displayName"],
+                    searchSnapshot.docs[index]["photoUrl"],
+                    searchSnapshot.docs[index]["uid"],
+                  );
+                })
+            : Container();
   }
 
   Widget userTile(
@@ -163,23 +188,6 @@ class _SearchUserState extends State<SearchUser> {
                               ),
                             ),
                           ),
-                          // Padding(
-                          //   padding: const EdgeInsets.only(left: 10.0),
-                          //   child: Container(
-                          //     decoration: BoxDecoration(
-                          //         color: Colors.grey[300],
-                          //         shape: BoxShape.circle),
-                          //     child: IconButton(
-                          //       onPressed: () {
-                          //         initiateSearch();
-                          //       },
-                          //       icon: const Icon(
-                          //         Icons.search,
-                          //         color: kPrimaryColor,
-                          //       ),
-                          //     ),
-                          //   ),
-                          // )
                         ],
                       ),
                     ),
