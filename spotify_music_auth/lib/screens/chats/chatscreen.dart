@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/screens/chats/chat.dart';
 import 'package:spotify_music_auth/screens/chats/search.dart';
@@ -16,7 +17,10 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Chats"),
+        title: Text(
+          "Chats",
+          style: GoogleFonts.openSans(),
+        ),
         backgroundColor: kPrimaryColor,
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -27,8 +31,11 @@ class _ChatScreenState extends State<ChatScreen> {
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return const Center(
-              child: Text("No Chats Found. Search For a User"),
+            return Center(
+              child: Text(
+                "No Chats Found. Search For a User",
+                style: GoogleFonts.openSans(),
+              ),
             );
           }
           final List<DocumentSnapshot> documents = snapshot.data!.docs;
@@ -121,12 +128,16 @@ class ChatRoomList extends StatelessWidget {
                     children: [
                       Text(
                         snapshot.data!.docs[0]["displayName"].toString(),
-                        style: const TextStyle(fontSize: 16.0),
+                        style: GoogleFonts.openSans(
+                          fontSize: 16.0,
+                        ),
                       ),
                       Text(
                         username.capitalize(),
-                        style: const TextStyle(
-                            fontSize: 12.0, fontWeight: FontWeight.w100),
+                        style: GoogleFonts.openSans(
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.w100,
+                        ),
                       ),
                     ],
                   ),

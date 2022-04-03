@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 
 class RoundedButton extends StatelessWidget {
@@ -29,7 +30,7 @@ class RoundedButton extends StatelessWidget {
         child: Center(
           child: Text(
             text,
-            style: TextStyle(
+            style: GoogleFonts.openSans(
               color: textColor,
               fontSize: 14,
               fontWeight: FontWeight.w500,

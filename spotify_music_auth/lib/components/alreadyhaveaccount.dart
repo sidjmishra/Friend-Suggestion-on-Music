@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 
 class AlreadyHaveAnAccountCheck extends StatelessWidget {
@@ -17,13 +18,15 @@ class AlreadyHaveAnAccountCheck extends StatelessWidget {
       children: <Widget>[
         Text(
           login ? "Don’t have an Account ? " : "Already have an Account ? ",
-          style: const TextStyle(color: kPrimaryColor),
+          style: GoogleFonts.openSans(
+            color: kPrimaryColor,
+          ),
         ),
         GestureDetector(
           onTap: press,
           child: Text(
             login ? "Sign Up" : "Sign In",
-            style: const TextStyle(
+            style: GoogleFonts.openSans(
               color: kPrimaryColor,
               fontWeight: FontWeight.bold,
             ),

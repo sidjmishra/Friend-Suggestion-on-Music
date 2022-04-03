@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:logger/logger.dart';
@@ -117,7 +118,10 @@ class _PlayerState extends State<Player> {
         }
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Play-Connect'),
+            title: Text(
+              'Play-Connect',
+              style: GoogleFonts.openSans(),
+            ),
             centerTitle: true,
             backgroundColor: kPrimaryColor,
           ),
@@ -132,7 +136,10 @@ class _PlayerState extends State<Player> {
                   children: [
                     _connected
                         ? playerState(context)
-                        : const Text("Spotify not connected"),
+                        : Text(
+                            "Spotify not connected",
+                            style: GoogleFonts.openSans(),
+                          ),
                   ],
                 ),
         );
@@ -163,24 +170,33 @@ class _PlayerState extends State<Player> {
             children: [
               _connected
                   ? spotifyImageWidget(track.imageUri)
-                  : const Text('Connect to see an image...'),
+                  : Text(
+                      'Connect to see an image...',
+                      style: GoogleFonts.openSans(),
+                    ),
               const Divider(),
               Text(
                 '${track.name} - ${track.artist.name}',
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontWeight: FontWeight.w500),
+                style: GoogleFonts.openSans(
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               const Divider(),
               Text(
                 'Artist: ${track.artist.name} - ${track.album.name}',
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontWeight: FontWeight.w500),
+                style: GoogleFonts.openSans(
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               const Divider(),
               Text(
                 'Album: ${track.album.name}',
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontWeight: FontWeight.w500),
+                style: GoogleFonts.openSans(
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               // Text(
               //     'Progress: ${(playerState.playbackPosition ~/ 1000) / 100} / ${(track.duration ~/ 1000) / 100}  '),
@@ -282,13 +298,21 @@ class _PlayerState extends State<Player> {
           return SizedBox(
             width: ImageDimension.small.value.toDouble(),
             height: ImageDimension.small.value.toDouble(),
-            child: const Center(child: Text('Error getting image')),
+            child: Center(
+                child: Text(
+              'Error getting image',
+              style: GoogleFonts.openSans(),
+            )),
           );
         } else {
           return SizedBox(
             width: ImageDimension.small.value.toDouble(),
             height: ImageDimension.small.value.toDouble(),
-            child: const Center(child: Text('Getting image...')),
+            child: Center(
+                child: Text(
+              'Getting image...',
+              style: GoogleFonts.openSans(),
+            )),
           );
         }
       },

@@ -3,6 +3,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:flutter/material.dart";
+import 'package:google_fonts/google_fonts.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/models/users.dart';
 
@@ -53,11 +54,13 @@ class _EditProfileState extends State<EditProfile> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.only(top: 12.0),
+        Padding(
+          padding: const EdgeInsets.only(top: 12.0),
           child: Text(
             'Display Name',
-            style: TextStyle(color: Colors.grey),
+            style: GoogleFonts.openSans(
+              color: Colors.grey,
+            ),
           ),
         ),
         TextField(
@@ -74,12 +77,14 @@ class _EditProfileState extends State<EditProfile> {
   Column buildBioNameField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        const Padding(
-          padding: EdgeInsets.only(top: 12.0),
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 12.0),
           child: Text(
             'Bio',
-            style: TextStyle(color: Colors.grey),
+            style: GoogleFonts.openSans(
+              color: Colors.grey,
+            ),
           ),
         ),
         TextField(
@@ -112,7 +117,11 @@ class _EditProfileState extends State<EditProfile> {
         'displayName': displayNameController.text,
         'bio': bioController.text,
       });
-      SnackBar snackbar = const SnackBar(content: Text('Profile Updated'));
+      SnackBar snackbar = SnackBar(
+          content: Text(
+        'Profile Updated',
+        style: GoogleFonts.openSans(),
+      ));
       _scaffoldKey.currentState!.showSnackBar(snackbar);
     }
   }
@@ -123,9 +132,9 @@ class _EditProfileState extends State<EditProfile> {
       key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: kPrimaryColor,
-        title: const Text(
+        title: Text(
           'Edit Profile',
-          style: TextStyle(
+          style: GoogleFonts.openSans(
             color: Colors.white,
           ),
         ),
@@ -174,7 +183,7 @@ class _EditProfileState extends State<EditProfile> {
                         onPressed: updateProfileData,
                         child: Text(
                           'Update Profile',
-                          style: TextStyle(
+                          style: GoogleFonts.openSans(
                             color: Theme.of(context).primaryColor,
                             fontSize: 20.0,
                             fontWeight: FontWeight.bold,

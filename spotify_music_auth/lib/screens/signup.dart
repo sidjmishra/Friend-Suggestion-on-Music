@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:spotify_music_auth/components/alreadyhaveaccount.dart';
 import 'package:spotify_music_auth/components/roundedbutton.dart';
@@ -123,9 +124,11 @@ class _SignUpState extends State<SignUp> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      const Text(
+                      Text(
                         "SIGN UP",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: GoogleFonts.openSans(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       SizedBox(height: size.height * 0.02),
                       GestureDetector(
@@ -145,9 +148,11 @@ class _SignUpState extends State<SignUp> {
                           : SizedBox(height: size.height * 0.02),
                       isImage
                           ? const Text("")
-                          : const Text(
+                          : Text(
                               "TAP TO ADD A PROFILE PICTURE",
-                              style: TextStyle(fontWeight: FontWeight.w300),
+                              style: GoogleFonts.openSans(
+                                fontWeight: FontWeight.w300,
+                              ),
                             ),
                       const Divider(),
                       TextFieldContainer(

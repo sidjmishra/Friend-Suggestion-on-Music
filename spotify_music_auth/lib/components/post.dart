@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/models/users.dart';
 import 'package:spotify_music_auth/services/database.dart';
@@ -138,7 +139,7 @@ class _PostState extends State<Post> {
                               showProfile(context, profileId: user.uid),
                           child: Text(
                             username,
-                            style: const TextStyle(
+                            style: GoogleFonts.openSans(
                               color: Colors.black,
                               fontSize: 14.0,
                               fontWeight: FontWeight.bold,
@@ -149,7 +150,9 @@ class _PostState extends State<Post> {
                             ? Container()
                             : Text(
                                 location,
-                                style: const TextStyle(fontSize: 12.0),
+                                style: GoogleFonts.openSans(
+                                  fontSize: 12.0,
+                                ),
                               ),
                       ],
                     ),
@@ -174,21 +177,29 @@ class _PostState extends State<Post> {
         context: parentContext,
         builder: (context) {
           return SimpleDialog(
-            title: const Text('Remove The Post?'),
+            title: Text(
+              'Remove The Post?',
+              style: GoogleFonts.openSans(),
+            ),
             children: [
               SimpleDialogOption(
                 onPressed: () {
                   Database().deletePost(uid, postId, username);
                   Navigator.pop(context);
                 },
-                child: const Text(
+                child: Text(
                   'Delete',
-                  style: TextStyle(color: Colors.red),
+                  style: GoogleFonts.openSans(
+                    color: Colors.red,
+                  ),
                 ),
               ),
               SimpleDialogOption(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
+                child: Text(
+                  'Cancel',
+                  style: GoogleFonts.openSans(),
+                ),
               )
             ],
           );
@@ -332,7 +343,7 @@ class _PostState extends State<Post> {
               margin: const EdgeInsets.only(left: 10.0),
               child: Text(
                 '$likeCount likes  $commentCount comments',
-                style: const TextStyle(
+                style: GoogleFonts.openSans(
                   color: Colors.black,
                 ),
               ),
@@ -346,14 +357,17 @@ class _PostState extends State<Post> {
               margin: const EdgeInsets.only(left: 10.0),
               child: Text(
                 '$username ',
-                style: const TextStyle(
+                style: GoogleFonts.openSans(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
             Expanded(
-              child: Text(caption),
+              child: Text(
+                caption,
+                style: GoogleFonts.openSans(),
+              ),
             )
           ],
         )

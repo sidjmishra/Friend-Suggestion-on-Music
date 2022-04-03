@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 import 'package:spotify_sdk/models/connection_status.dart';
 import 'package:spotify_sdk/models/crossfade_state.dart';
@@ -77,7 +78,10 @@ class _SpotifyUserState extends State<SpotifyUser> {
                   : accessToken != ""
                       ? ElevatedButton(
                           onPressed: connectToSpotifyRemote,
-                          child: const Text("Connect Spotify"),
+                          child: Text(
+                            "Connect Spotify",
+                            style: GoogleFonts.openSans(),
+                          ),
                           style: ButtonStyle(
                             foregroundColor:
                                 MaterialStateProperty.all<Color>(Colors.white),
@@ -93,7 +97,10 @@ class _SpotifyUserState extends State<SpotifyUser> {
                         )
                       : ElevatedButton(
                           onPressed: getAuthenticationToken,
-                          child: const Text("Get Spotify Access"),
+                          child: Text(
+                            "Get Spotify Access",
+                            style: GoogleFonts.openSans(),
+                          ),
                           style: ButtonStyle(
                             foregroundColor:
                                 MaterialStateProperty.all<Color>(Colors.white),
@@ -129,8 +136,11 @@ class _SpotifyUserState extends State<SpotifyUser> {
       builder: (BuildContext context, AsyncSnapshot<PlayerContext> snapshot) {
         var playerContext = snapshot.data;
         if (playerContext == null) {
-          return const Center(
-            child: Text('Not connected'),
+          return Center(
+            child: Text(
+              'Not connected',
+              style: GoogleFonts.openSans(),
+            ),
           );
         }
 
@@ -138,11 +148,23 @@ class _SpotifyUserState extends State<SpotifyUser> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('Title: ${playerContext.title}'),
-            Text('Subtitle: ${playerContext.subtitle}'),
-            Text('Type: ${playerContext.type}'),
+            Text(
+              'Title: ${playerContext.title}',
+              style: GoogleFonts.openSans(),
+            ),
+            Text(
+              'Subtitle: ${playerContext.subtitle}',
+              style: GoogleFonts.openSans(),
+            ),
+            Text(
+              'Type: ${playerContext.type}',
+              style: GoogleFonts.openSans(),
+            ),
             // User playlist
-            Text('Uri: ${playerContext.uri}'),
+            Text(
+              'Uri: ${playerContext.uri}',
+              style: GoogleFonts.openSans(),
+            ),
           ],
         );
       },
