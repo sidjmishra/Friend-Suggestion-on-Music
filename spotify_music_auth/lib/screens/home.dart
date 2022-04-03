@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, unused_field, prefer_final_fields
 
 import 'dart:typed_data';
 

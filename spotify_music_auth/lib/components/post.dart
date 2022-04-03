@@ -276,8 +276,10 @@ class _PostState extends State<Post> {
               imageUrl: mediaUrl,
               fit: BoxFit.cover,
               placeholder: (context, url) => const Padding(
-                child: CircularProgressIndicator(
-                  color: kPrimaryColor,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: kPrimaryColor,
+                  ),
                 ),
                 padding: EdgeInsets.all(20.0),
               ),

@@ -66,7 +66,7 @@ class _HomeActualState extends State<HomeActual> {
               ],
             ),
             body: _sampleFlowWidget(context),
-            // bottomNavigationBar: _connected ? _buildBottomBar(context) : null,
+            bottomNavigationBar: _connected ? _buildBottomBar(context) : null,
           );
         },
       ),
