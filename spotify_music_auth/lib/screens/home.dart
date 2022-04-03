@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:logger/logger.dart';
@@ -196,7 +197,10 @@ class _HomePageState extends State<HomePage> {
         }
         return Scaffold(
             appBar: AppBar(
-              title: const Text('Play-Connect'),
+              title: Text(
+                'Play-Connect',
+                style: GoogleFonts.openSans(),
+              ),
               backgroundColor: kPrimaryColor,
               actions: [
                 IconButton(
@@ -222,7 +226,7 @@ class _HomePageState extends State<HomePage> {
             //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             //     children: [
             //       Text(
-            //           "Spotify connected: $accessToken ${Constants.userName}"),
+            //           "Spotify connected: $accessToken ${Constants.userName}", style: GoogleFonts.openSans(),),
             //     ],
             //   ),
             );
@@ -238,16 +242,20 @@ class _HomePageState extends State<HomePage> {
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return const Center(
-              child: Text("No Posts Yet!"),
+            return Center(
+              child: Text(
+                "No Posts Yet!",
+                style: GoogleFonts.openSans(),
+              ),
+            );
+          } else {
+            posts = snapshot.data!.docs
+                .map((doc) => Post.fromDocument(doc))
+                .toList();
+            return ListView(
+              children: posts,
             );
           }
-
-          posts =
-              snapshot.data!.docs.map((doc) => Post.fromDocument(doc)).toList();
-          return ListView(
-            children: posts,
-          );
         });
   }
 

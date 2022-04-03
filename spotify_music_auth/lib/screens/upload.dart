@@ -14,7 +14,10 @@ import 'package:uuid/uuid.dart';
 import 'package:image/image.dart' as im;
 
 class Upload extends StatefulWidget {
-  const Upload({Key? key}) : super(key: key);
+  final String uploadUid;
+  final String uploadUser;
+  const Upload({required this.uploadUser, required this.uploadUid, Key? key})
+      : super(key: key);
 
   @override
   State<Upload> createState() => _UploadState();
@@ -105,8 +108,13 @@ class _UploadState extends State<Upload>
       isUpLoading = true;
     });
     await compressImage();
-    Database().addPostToDatabase(postId, Constants.uid, locationController.text,
-        _imageFile, Constants.userName, captionController.text);
+    Database().addPostToDatabase(
+        postId,
+        widget.uploadUid,
+        locationController.text,
+        _imageFile,
+        widget.uploadUser,
+        captionController.text);
     captionController.clear();
     locationController.clear();
     setState(() {

@@ -81,6 +81,8 @@ class _PostState extends State<Post> {
   int commentCount = 0;
   Map likes;
 
+  String postProfile = "";
+
   _PostState({
     required this.postId,
     required this.uid,
@@ -104,6 +106,15 @@ class _PostState extends State<Post> {
           PlayUser user =
               PlayUser.fromDocument(snapshot.data as DocumentSnapshot);
           bool isPostOwner = currentUserId == uid;
+          FirebaseFirestore.instance
+              .collection("Users")
+              .doc(uid)
+              .get()
+              .then((value) {
+            setState(() {
+              postProfile = value.data()!["photoUrl"];
+            });
+          });
           return Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
@@ -115,8 +126,7 @@ class _PostState extends State<Post> {
                   children: [
                     CircleAvatar(
                       radius: 20.0,
-                      backgroundImage:
-                          CachedNetworkImageProvider(Constants.photoUrl),
+                      backgroundImage: CachedNetworkImageProvider(postProfile),
                       backgroundColor: Colors.grey,
                     ),
                     const SizedBox(width: 10.0),
@@ -127,7 +137,7 @@ class _PostState extends State<Post> {
                           onTap: () =>
                               showProfile(context, profileId: user.uid),
                           child: Text(
-                            Constants.userName,
+                            username,
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 14.0,
@@ -200,8 +210,7 @@ class _PostState extends State<Post> {
           .doc(postId)
           .update({'likes.$currentUserId': false});
 
-      Database()
-          .removeLikeFromActivityFeed(currentUserId, Constants.uid, postId);
+      Database().removeLikeFromActivityFeed(currentUserId, uid, postId);
       setState(() {
         likeCount -= 1;
         isLiked = false;
@@ -220,7 +229,7 @@ class _PostState extends State<Post> {
           .doc(postId)
           .update({'likes.$currentUserId': true});
 
-      Database().addLikeToActivityFeed(Constants.uid, postId, mediaUrl);
+      Database().addLikeToActivityFeed(uid, postId, mediaUrl);
       setState(() {
         likeCount += 1;
         isLiked = true;
@@ -250,16 +259,19 @@ class _PostState extends State<Post> {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          CachedNetworkImage(
-            imageUrl: mediaUrl,
-            fit: BoxFit.cover,
-            placeholder: (context, url) => const Padding(
-              child: CircularProgressIndicator(
-                color: kPrimaryColor,
+          SizedBox(
+            height: 300.0,
+            child: CachedNetworkImage(
+              imageUrl: mediaUrl,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => const Padding(
+                child: CircularProgressIndicator(
+                  color: kPrimaryColor,
+                ),
+                padding: EdgeInsets.all(20.0),
               ),
-              padding: EdgeInsets.all(20.0),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
             ),
-            errorWidget: (context, url, error) => const Icon(Icons.error),
           ),
           showHeart
               ? Icon(

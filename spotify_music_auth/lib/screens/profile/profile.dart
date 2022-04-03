@@ -573,6 +573,12 @@ class _ProfileState extends State<Profile> {
                       LineIcon(LineIcons.alternateSignOut, color: Colors.white),
                   tooltip: "Logout",
                   onPressed: () {
+                    setState(() {
+                      Constants.displayName = "";
+                      Constants.photoUrl = "";
+                      Constants.uid = "";
+                      Constants.userName = "";
+                    });
                     AuthService().signOut().then((value) =>
                         Navigator.pushReplacement(
                             context,

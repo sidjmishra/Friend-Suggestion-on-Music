@@ -197,7 +197,7 @@ class Database {
       'mediaUrl': mediaUrl,
       'timeStamp': DateTime.now(),
       'commentData': '',
-      'ownerId': '',
+      'ownerId': uid,
     });
   }
 

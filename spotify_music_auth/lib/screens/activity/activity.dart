@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:spotify_music_auth/components/postscreen.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
+import 'package:spotify_music_auth/screens/activity/searchuser.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class Activity extends StatefulWidget {
@@ -41,7 +42,7 @@ class _ActivityState extends State<Activity> {
         child: Text(
           'No Activity Just Yet',
           style: TextStyle(
-            fontSize: 30,
+            fontSize: 20,
             color: Colors.black87,
             fontWeight: FontWeight.w300,
           ),
@@ -57,6 +58,18 @@ class _ActivityState extends State<Activity> {
         automaticallyImplyLeading: false,
         title: const Text('Activity Feed'),
         backgroundColor: kPrimaryColor,
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: kPrimaryColor,
+        tooltip: "Search User",
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const SearchUser()));
+        },
+        child: const Icon(
+          Icons.search,
+          color: Colors.white,
+        ),
       ),
       body: FutureBuilder<QuerySnapshot<Object?>>(
         future: FirebaseFirestore.instance
@@ -173,7 +186,7 @@ class ActivityFeedItem extends StatelessWidget {
     if (type == 'like') {
       activityItemText = ' Liked Your Post';
     } else if (type == 'follow') {
-      activityItemText = ' Is Following You';
+      activityItemText = ' is Following You';
     } else if (type == 'comment') {
       activityItemText = ' Replied: $commentData';
     } else {

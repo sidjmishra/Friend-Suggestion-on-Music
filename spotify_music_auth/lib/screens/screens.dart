@@ -21,19 +21,27 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int _currentPage = 0;
   String userUid = "";
+  String name = "";
 
-  getUid() {
+  getUser() {
     HelperFunction.getUserUidSharedPreference().then((value) {
       setState(() {
         userUid = value!;
       });
       print(userUid);
     });
+
+    HelperFunction.getUserNameSharedPreference().then((value) {
+      setState(() {
+        name = value!;
+      });
+      print(name);
+    });
   }
 
   @override
   void initState() {
-    getUid();
+    getUser();
     super.initState();
   }
 
@@ -42,7 +50,7 @@ class _HomeState extends State<Home> {
     final List<Widget> pages = [
       const HomePage(),
       const Player(),
-      const Upload(),
+      Upload(uploadUid: userUid, uploadUser: name),
       const Activity(),
       Profile(profileId: userUid),
     ];

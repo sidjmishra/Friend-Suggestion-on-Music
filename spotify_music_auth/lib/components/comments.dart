@@ -68,6 +68,10 @@ class CommentsState extends State<Comments> {
   }
 
   addComment() {
+    FirebaseFirestore.instance.collection('Comments').doc(postId).set({
+      "timeStamp": DateTime.now(),
+    });
+
     FirebaseFirestore.instance
         .collection('Comments')
         .doc(postId)

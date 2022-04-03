@@ -2,6 +2,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:spotify_music_auth/components/post.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 
@@ -36,9 +37,7 @@ class PostScreen extends StatelessWidget {
             appBar: AppBar(
               title: Text(
                 post.caption,
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
+                style: GoogleFonts.openSans(color: Colors.white),
               ),
               backgroundColor: kPrimaryColor,
             ),
