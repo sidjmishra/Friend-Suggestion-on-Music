@@ -15,6 +15,16 @@ class Database {
   final followingRef = FirebaseFirestore.instance.collection('Following');
   final comments = FirebaseFirestore.instance.collection('Comments');
   final feed = FirebaseFirestore.instance.collection('Activity Feed');
+  final spotify = FirebaseFirestore.instance.collection('Spotify Profile');
+
+  userSpotify(String uid, List tracks, List genres, List artists, List albums) {
+    spotify.doc(uid).set({
+      "tracks": tracks,
+      "albums": albums,
+      "genres": genres,
+      "artists": artists
+    });
+  }
 
   getUserByName(String username) async {
     return await db
