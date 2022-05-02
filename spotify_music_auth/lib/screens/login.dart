@@ -54,8 +54,8 @@ class _LoginPageState extends State<LoginPage> {
 
             HelperFunction.saveUserLoggedInSharedPreference(true);
 
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => SpotAuth()));
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const SpotAuth()));
           }
         }).catchError((err) {
           print(err);

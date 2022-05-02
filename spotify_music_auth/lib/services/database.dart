@@ -25,6 +25,12 @@ class Database {
       "artists": artists,
       "uid": uid
     });
+    db.doc(uid).update({
+      "tracks": tracks,
+      "albums": albums,
+      "genres": genres,
+      "artists": artists,
+    });
   }
 
   getUserByName(String username) async {
