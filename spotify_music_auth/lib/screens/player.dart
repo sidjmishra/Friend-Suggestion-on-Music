@@ -1,4 +1,4 @@
-// ignore_for_file: unused_local_variable, unused_field
+// ignore_for_file: unused_local_variable, unused_field, avoid_print
 
 import 'dart:typed_data';
 
@@ -113,6 +113,12 @@ class _PlayerState extends State<Player> {
   void dispose() {
     disconnect();
     super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    disconnect();
+    super.deactivate();
   }
 
   @override

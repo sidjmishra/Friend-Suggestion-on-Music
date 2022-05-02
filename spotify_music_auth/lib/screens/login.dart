@@ -9,7 +9,6 @@ import 'package:spotify_music_auth/components/roundedbutton.dart';
 import 'package:spotify_music_auth/components/textfieldcontainer.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/constants/helper.dart';
-import 'package:spotify_music_auth/screens/screens.dart';
 import 'package:spotify_music_auth/screens/signup.dart';
 import 'package:spotify_music_auth/screens/spotauth.dart';
 import 'package:spotify_music_auth/services/auth.dart';
@@ -56,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
             HelperFunction.saveUserLoggedInSharedPreference(true);
 
             Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => const Home()));
+                context, MaterialPageRoute(builder: (context) => SpotAuth()));
           }
         }).catchError((err) {
           print(err);
@@ -74,11 +73,6 @@ class _LoginPageState extends State<LoginPage> {
         ),
       );
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 
   @override

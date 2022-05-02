@@ -6,9 +6,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:logger/logger.dart';
-import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/constants/helper.dart';
 import 'package:spotify_music_auth/screens/screens.dart';
+import 'package:spotify_music_auth/services/database.dart';
 import 'package:spotify_music_auth/services/responses.dart';
 import 'package:spotify_sdk/models/connection_status.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
@@ -24,11 +24,10 @@ class SpotAuth extends StatefulWidget {
 
 class _SpotAuthState extends State<SpotAuth> {
   String accessToken = "";
-  bool _loading = false;
-  bool _connected = false;
 
   String state = "";
   String city = "";
+  String id = "";
 
   List tracks = [];
   List albums = [];
@@ -69,7 +68,6 @@ class _SpotAuthState extends State<SpotAuth> {
       setStatus('Got a token: $authenticationToken');
       setState(() {
         accessToken = authenticationToken;
-        _connected = true;
       });
       getSpotifyProfile(accessToken);
       return authenticationToken;
@@ -109,42 +107,13 @@ class _SpotAuthState extends State<SpotAuth> {
     print(name);
     print(tracks);
     print(albums);
-  }
-
-  getUserInfo() async {
-    HelperFunction.getUserUidSharedPreference().then((value) {
-      setState(() {
-        Constants.uid = value!.toString();
-      });
-      print(Constants.uid);
-    });
-
-    HelperFunction.getUserDisplaySharedPreference().then((value) {
-      setState(() {
-        Constants.displayName = value!.toString();
-      });
-      print(Constants.displayName);
-    });
-
-    HelperFunction.getUserNameSharedPreference().then((value) {
-      setState(() {
-        Constants.userName = value!.toString();
-      });
-      print(Constants.userName);
-    });
-
-    HelperFunction.getUserPhotoUrlSharedPreference().then((value) {
-      setState(() {
-        Constants.photoUrl = value.toString();
-      });
-      print(Constants.photoUrl);
-    });
+    Database().userSpotify(id, tracks, genres, name, albums);
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => const Home()));
   }
 
   getLocation() async {
     loc.LocationData currentPosition;
-    String address;
-    String dateTime;
     bool serviceEnabled = false;
     loc.PermissionStatus permissionStatus;
 
@@ -180,8 +149,12 @@ class _SpotAuthState extends State<SpotAuth> {
 
   @override
   void initState() {
-    getLocation();
-    getUserInfo();
+    HelperFunction.getUserUidSharedPreference().then((value) {
+      setState(() {
+        id = value!.toString();
+      });
+      print(id);
+    });
     super.initState();
   }
 

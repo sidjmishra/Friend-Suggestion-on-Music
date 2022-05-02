@@ -7,7 +7,7 @@ import 'package:spotify_music_auth/services/auth.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(Home());
+  runApp(MyApp());
 }
 
 class MyHttpOverrides extends HttpOverrides {
@@ -19,8 +19,8 @@ class MyHttpOverrides extends HttpOverrides {
   }
 }
 
-class Home extends StatelessWidget {
-  Home({Key? key}) : super(key: key);
+class MyApp extends StatelessWidget {
+  MyApp({Key? key}) : super(key: key);
 
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
