@@ -99,7 +99,6 @@ class TopArtistResponse {
           "name": _user.items![4].name,
         }
       };
-      print(userMap);
       return userMap;
     } on DioError catch (e) {
       print(e);
@@ -156,7 +155,6 @@ class TopTracksResponse {
           "album": _user.items![4].album!.name,
         }
       };
-      print(userMap);
       return userMap;
     } on DioError catch (e) {
       print(e);

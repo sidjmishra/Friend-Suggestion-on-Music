@@ -192,7 +192,7 @@ class _LoginPageState extends State<LoginPage> {
                             context,
                             MaterialPageRoute(
                               builder: (context) {
-                                return const SpotAuth();
+                                return const SignUp();
                               },
                             ),
                           );

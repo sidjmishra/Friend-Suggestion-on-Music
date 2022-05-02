@@ -8,8 +8,6 @@ import 'package:spotify_music_auth/components/post.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/constants/helper.dart';
 import 'package:spotify_music_auth/screens/chats/chatscreen.dart';
-import 'package:spotify_sdk/models/connection_status.dart';
-import 'package:spotify_sdk/spotify_sdk.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);

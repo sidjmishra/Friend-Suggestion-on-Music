@@ -1,9 +1,14 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:logger/logger.dart';
+import 'package:spotify_music_auth/constants/constants.dart';
+import 'package:spotify_music_auth/constants/helper.dart';
+import 'package:spotify_music_auth/screens/screens.dart';
 import 'package:spotify_music_auth/services/responses.dart';
 import 'package:spotify_sdk/models/connection_status.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
@@ -64,6 +69,7 @@ class _SpotAuthState extends State<SpotAuth> {
       setStatus('Got a token: $authenticationToken');
       setState(() {
         accessToken = authenticationToken;
+        _connected = true;
       });
       getSpotifyProfile(accessToken);
       return authenticationToken;
@@ -81,37 +87,58 @@ class _SpotAuthState extends State<SpotAuth> {
         await TopArtistResponse(accessToken: accessToken).userData();
     Map<String, dynamic> track =
         await TopTracksResponse(accessToken: accessToken).userData();
-
     for (var v = 1; v <= 5; v++) {
-      for (var i in artists[v.toString()]["genres"]) {
+      for (var i in artists["$v"]["genres"]) {
         if (genres.contains(i)) {
           continue;
         } else {
           genres.add(i);
         }
       }
-      for (var i in artists[v.toString()]["name"]) {
-        if (name.contains(i)) {
-          continue;
-        } else {
-          name.add(i);
-        }
+      if (!name.contains(artists["$v"]["name"])) {
+        name.add(artists["$v"]["name"]);
       }
-      for (var i in track[v.toString()]["album"]) {
-        if (albums.contains(i)) {
-          continue;
-        } else {
-          albums.add(i);
-        }
+      if (!tracks.contains(track["$v"]["track"])) {
+        tracks.add(track["$v"]["track"]);
       }
-      for (var i in track[v.toString()]["track"]) {
-        if (tracks.contains(i)) {
-          continue;
-        } else {
-          tracks.add(i);
-        }
+      if (!albums.contains(track["$v"]["album"])) {
+        albums.add(track["$v"]["album"]);
       }
     }
+    print(genres);
+    print(name);
+    print(tracks);
+    print(albums);
+  }
+
+  getUserInfo() async {
+    HelperFunction.getUserUidSharedPreference().then((value) {
+      setState(() {
+        Constants.uid = value!.toString();
+      });
+      print(Constants.uid);
+    });
+
+    HelperFunction.getUserDisplaySharedPreference().then((value) {
+      setState(() {
+        Constants.displayName = value!.toString();
+      });
+      print(Constants.displayName);
+    });
+
+    HelperFunction.getUserNameSharedPreference().then((value) {
+      setState(() {
+        Constants.userName = value!.toString();
+      });
+      print(Constants.userName);
+    });
+
+    HelperFunction.getUserPhotoUrlSharedPreference().then((value) {
+      setState(() {
+        Constants.photoUrl = value.toString();
+      });
+      print(Constants.photoUrl);
+    });
   }
 
   getLocation() async {
@@ -154,6 +181,7 @@ class _SpotAuthState extends State<SpotAuth> {
   @override
   void initState() {
     getLocation();
+    getUserInfo();
     super.initState();
   }
 
