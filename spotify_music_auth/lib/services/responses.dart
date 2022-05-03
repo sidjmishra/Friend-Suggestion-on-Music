@@ -1,9 +1,10 @@
 // ignore_for_file: avoid_print
-
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/main.dart';
+import 'package:spotify_music_auth/services/friends.dart';
 import 'package:spotify_music_auth/services/topartists.dart';
 import 'package:spotify_music_auth/services/toptracks.dart';
 import 'package:spotify_music_auth/services/userprofile.dart';
@@ -160,5 +161,33 @@ class TopTracksResponse {
       print(e);
     }
     return userMap;
+  }
+}
+
+class FriendsResponse {
+  late Dio _dio;
+  String url = "https://play-connect.herokuapp.com/api/getMatches";
+
+  FriendsResponse() {
+    _dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+  }
+
+  userList() async {
+    try {
+      Friends friends;
+      Response response = await _dio.post(url,
+          options: Options(contentType: 'application/json'),
+          data: {"user_id": Constants.uid});
+      if (response.statusCode == 200) {
+        friends = Friends.fromJson(response.data);
+        return friends.data;
+      } else {
+        print("Data not found");
+      }
+    } on DioError catch (e) {
+      print(e);
+    }
+    return null;
   }
 }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:spotify_music_auth/constants/constants.dart';
 import 'package:spotify_music_auth/services/database.dart';
+import 'package:spotify_music_auth/services/responses.dart';
 
 class SearchUser extends StatefulWidget {
   const SearchUser({Key? key}) : super(key: key);
@@ -21,6 +22,9 @@ class _SearchUserState extends State<SearchUser> {
   bool isLoading = false;
   bool haveUserSearched = false;
   bool users = false;
+
+  List<dynamic> user = [];
+  var suggested = [];
 
   initiateSearch() async {
     if (searchEditingController.text.isNotEmpty) {
@@ -42,6 +46,16 @@ class _SearchUserState extends State<SearchUser> {
   }
 
   getUserList() async {
+    FriendsResponse().userList().then((value) {
+      for (var v in value.keys.toList()) {
+        if (!user.contains(v)) {
+          setState(() {
+            user.add(v);
+          });
+        }
+      }
+    });
+
     await FirebaseFirestore.instance.collection('Users').get().then((value) {
       setState(() {
         searchSnapshot = value;
@@ -69,12 +83,15 @@ class _SearchUserState extends State<SearchUser> {
                 shrinkWrap: true,
                 itemCount: searchSnapshot.docs.length,
                 itemBuilder: (context, index) {
-                  return userTile(
-                    searchSnapshot.docs[index]["username"],
-                    searchSnapshot.docs[index]["displayName"],
-                    searchSnapshot.docs[index]["photoUrl"],
-                    searchSnapshot.docs[index]["uid"],
-                  );
+                  if (user.contains(searchSnapshot.docs[index]["uid"])) {
+                    return userTile(
+                      searchSnapshot.docs[index]["username"],
+                      searchSnapshot.docs[index]["displayName"],
+                      searchSnapshot.docs[index]["photoUrl"],
+                      searchSnapshot.docs[index]["uid"],
+                    );
+                  }
+                  return Container();
                 })
             : Container();
   }
@@ -131,14 +148,6 @@ class _SearchUserState extends State<SearchUser> {
         ],
       ),
     );
-  }
-
-  getChatRoomId(String a, String b) {
-    if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
-      return "$b\_$a";
-    } else {
-      return "$a\_$b";
-    }
   }
 
   @override
